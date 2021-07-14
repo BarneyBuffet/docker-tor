@@ -94,7 +94,6 @@ SocksPolicy accept 192.168.0.11
 SocksPolicy reject *
 ```
 
-
 Allow only 192.168.1.0 [subnet](http://www.steves-internet-guide.com/subnetting-subnet-masks-explained/) IPs to use the proxy:
 
 ```bash
@@ -113,7 +112,7 @@ SocksPolicy accept localhost,accept 192.168.1.0/24
 SocksPolicy reject *
 ```
 
-## Test tor is working
+## Test Tor is working
 
 Once the docker container is running the tor connection can be tested by opening a terminal within the container and using the below commands
 

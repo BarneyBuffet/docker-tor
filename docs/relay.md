@@ -1,4 +1,4 @@
 # Tor Relay
 
-** NOT YET IMPLEMENTED **
+** NOT IMPLEMENTED YET **
 

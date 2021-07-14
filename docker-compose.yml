@@ -1,0 +1,20 @@
+
+---
+version: "3.9"  # optional since v1.27.0
+
+services:
+  tor:
+    container_name: tor
+    image: barneybuffet/tor:latest
+    environment:
+      TOR_PROXY: 'true'
+      TOR_PROXY_PORT: '9050'
+      TOR_PROXY_ACCEPT: 'accept 127.0.0.1,accept 10.0.0.0/8,accept 172.16.0.0/12,accept 192.168.0.0/16'
+      TOR_PROXY_CONTROL_PORT: '9051'
+      TOR_PROXY_CONTROL_PASSWORD: 'password'
+      TOR_PROXY_CONTROL_COOKIE: 'true'
+    volumes:
+      - tor:/tor/
+      ports:
+      - "9050:9050/tcp"
+    restart: unless-stopped

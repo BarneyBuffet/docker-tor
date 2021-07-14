@@ -1,7 +1,8 @@
 # Building from Source
 
 
-# Welcome to MkDocs
+
+## MkDocs
 
 For full documentation visit [mkdocs.org](https://www.mkdocs.org).
 
