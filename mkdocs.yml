@@ -1,0 +1,10 @@
+site_name: Docker Tor
+site_url: https://BarneyBuffet.github.io/docker-tor
+theme:
+  name: material
+nav:
+    - Home: index.md
+    - Proxy: proxy.md
+    - Hidden Serive: service.md
+    - Relay: relay.md
+    - Build: build.md
