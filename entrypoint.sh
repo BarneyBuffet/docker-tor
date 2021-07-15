@@ -34,10 +34,8 @@ proxy_config(){
     sed -i "/ControlPort.*/c\ControlPort ${TOR_PROXY_CONTROL_PORT}" /tor/torrc
     HASHED_PASSWORD=$(tor --hash-password $TOR_PROXY_CONTROL_PASSWORD)
     sed -i "/# HashedControlPassword.*/c\HashedControlPassword $HASHED_PASSWORD" /tor/torrc
-  fi
-
-  # Enable control port with an authentication cookie
-  if [[ -n "${TOR_PROXY_CONTROL_PORT}" ]] && $TOR_PROXY_CONTROL_COOKIE; then
+  # Enable control port with an authentication cookie. Else if only control port default to cookie
+  elif [[ -n "${TOR_PROXY_CONTROL_PORT}" ]] && $TOR_PROXY_CONTROL_COOKIE || [[ -n "${TOR_PROXY_CONTROL_PORT}" ]]; then
     sed -i "/ControlPort.*/c\ControlPort ${TOR_PROXY_CONTROL_PORT}" /tor/torrc
     sed -i "/# CookieAuthentication 1/c\CookieAuthentication 1" /tor/torrc
     sed -i "/# CookieAuthFileGroupReadable 1/c\CookieAuthFileGroupReadable 1" /tor/torrc

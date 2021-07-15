@@ -6,7 +6,7 @@ login:
 list-builders:
 	docker buildx ls
 
-initialize-builder:
+initialise-builder:
 	docker buildx create --name mybuilder
 	docker buildx use mybuilder
 	docker buildx inspect --boostrap
@@ -14,8 +14,8 @@ initialize-builder:
 build:
 	docker buildx build \
 		--platform linux/amd64,linux/arm64,linux/arm/v7 \
+		-t barneybuffet/tor:$(TOR_VER) \
 		-t barneybuffet/tor:latest \
-		-t barneybuffet/tor: $(TOR_VER)
 		--push \
 		. \
 

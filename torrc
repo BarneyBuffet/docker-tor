@@ -14,7 +14,7 @@ Log [handshake]notice [*]notice stderr
 #         TOR PROXY CONFIG         #
 ####################################
 
-## Using port 0 will disable the proxy client.
+## Disable Socks5 proxy by default
 SocksPort 0
 
 ## Accept localhost and RFC1918 networks, reject all others

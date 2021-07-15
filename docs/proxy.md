@@ -18,8 +18,8 @@ docker run -d --name tor -p 9050:9050/tcp barneybuffet/tor:latest
 
 By default the image will:
 
-* Set a socks5 proxy port to `9050`
-* Set a socks5 proxy port binding to all ip address. i.e. `0.0.0.0`
+* Set socks5 proxy port to `9050`
+* Set socks5 proxy port binding to all ip address. i.e. `0.0.0.0`
 * Restrict socks5 proxy access to [RFC1918](https://datatracker.ietf.org/doc/html/rfc1918#section-3) local addresses, and reject all others ip address
 
 These defaults can be configured via docker environmental variables (options) discussed below.

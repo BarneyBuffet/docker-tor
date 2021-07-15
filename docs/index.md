@@ -18,7 +18,8 @@ The docker image:
 * Downloads the Tor source code tarballs and associated signature file
 * Verifies the Tor source tarballs against [Roger Dingledine: 0xEB5A896A28988BF5](https://2019.www.torproject.org/include/keys.txt) key
 * Compiles Tor from source
-* Templates out the Tor config file [torrc](https://www.mankier.com/1/tor)
+* Templates out the Tor config file [torrc](https://www.mankier.com/1/tor) _(this step is skipped if torrc.lock file exists in the `/tor` directory)_
+* Set a torrc.lock file to persist config file
 * Starts the tor service
 
 During container creation the container will log creation of the config file, the templated config file and once created will log any Tor notifications.
@@ -34,6 +35,36 @@ Create a docker image with the following docker run command
 ```bash
 docker run -d --name tor -p 9050:9050 -v <your-folder>:/tor barneybuffet/tor:latest
 ```
+
+Docker compose file:
+
+```bash
+---
+version: "3.9"
+
+services:
+  tor:
+    container_name: tor
+    image: barneybuffet/tor:latest
+    environment:
+      TOR_PROXY: 'true'
+      TOR_PROXY_PORT: '9050'
+      TOR_PROXY_ACCEPT: 'accept 127.0.0.1,accept 10.0.0.0/8,accept 172.16.0.0/12,accept 192.168.0.0/16'
+      TOR_PROXY_CONTROL_PORT: '9051'
+      TOR_PROXY_CONTROL_PASSWORD: 'password'
+      TOR_PROXY_CONTROL_COOKIE: 'true'
+    volumes:
+      - tor:/tor/
+      ports:
+      - "9050:9050/tcp"
+    restart: unless-stopped
+```
+
+## Volume
+
+This image sets the Tor data directory to `/tor`, including the authorisation cookie. To persist Tor data and config you can mount the `/tor` directory with your image.
+
+If the Tor configuration you are after isn't set by the runtime environmental variables you can modify the `/tor/torrc` for your custom configuration. The `torrc` file will persist while the `/tor/torrc.lock` file is present.
 
 #### References
 
