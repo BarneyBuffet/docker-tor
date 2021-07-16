@@ -2,7 +2,7 @@
 FROM alpine:3.14 AS tor-builder
 
 # Get latest version from > https://dist.torproject.org/
-ARG TOR_VER=0.4.6.6 
+ARG TOR_VER=0.4.6.6
 ARG TORGZ=https://dist.torproject.org/tor-$TOR_VER.tar.gz
 
 # Install tor make requirements
@@ -26,9 +26,12 @@ RUN tar xfz tor-$TOR_VER.tar.gz &&\
 FROM alpine:3.14
 
 LABEL maintainer="Barney Buffet <BarneyBuffet@tutanota.com>"
-LABEL name="tor"
+LABEL name="Tor network client (daemon)"
 LABEL version=$TOR_VER
 LABEL description="A docker image for tor"
+LABEL license="GNU"
+LABEL url="https://www.torproject.org"
+LABEL vcs-url="https://github.com/BarneyBuffet"
 
 # Non-root user for security purposes.
 #
@@ -54,9 +57,11 @@ RUN mkdir -p /var/run/tor && chown -R tor:tor /var/run/tor && chmod 2700 /var/ru
 # Copy compiled tor from tor-builder
 COPY --from=tor-builder /usr/local/ /usr/local/
 
-# Copy torrc
+# Copy torrc and examples
 COPY --chown=tor:tor ./torrc /tor/torrc
-COPY --chown=tor:tor ./torrc.example /tor/torrc.example
+COPY --chown=tor:tor ./torrc.* /tor/
+
+# Copy entrypoint shell script for templating torrc
 COPY --chown=tor:tor --chmod=+x ./entrypoint.sh /entrypoint.sh
 
 USER tor
@@ -66,7 +71,11 @@ HEALTHCHECK --interval=60s --timeout=15s --start-period=20s \
             CMD curl -sx localhost:8118 'https://check.torproject.org/' | \
             grep -qm1 Congratulations
 
+# Mount point for persitant data
 VOLUME ["/tor"]
+
+# Working directory for neater docker container exec
+WORKDIR /tor
 
 ENV TOR_PROXY=true\
     TOR_SERVICE=false\

@@ -81,7 +81,7 @@ Allow only 192.168.0.11 to use the proxy:
 ```bash
 docker run -d --name tor \
   -e TOR_PROXY=true \
-  -e TOR_PROXY_ACCEPT='accpet 192.168.0.11' \
+  -e TOR_PROXY_ACCEPT='accept 192.168.0.11' \
   -p 9050:9050/tcp \
   barneybuffet/tor:latest
 ```

@@ -16,6 +16,7 @@ build:
 		--platform linux/amd64,linux/arm64,linux/arm/v7 \
 		-t barneybuffet/tor:$(TOR_VER) \
 		-t barneybuffet/tor:latest \
+		--build-arg TOR_VER=$(TOR_VER) \
 		--push \
 		. \
 

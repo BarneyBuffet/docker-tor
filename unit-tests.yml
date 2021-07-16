@@ -1,0 +1,54 @@
+schemaVersion: '2.0.0'
+#  https://github.com/GoogleContainerTools/container-structure-test
+
+# Test container environment is configured as expected
+metadataTest:
+  labels:
+    - key: 'maintainer'
+      value: "Barney Buffet <BarneyBuffet@tutanota.com>"
+    - key: 'name'
+      value: 'Tor network client (daemon)'
+    - key: 'description'
+      value: 'A docker image for tor'
+  env:
+    - key: TOR_PROXY
+      value: "true"
+    - key: TOR_SERVICE
+      value: "false"
+    - key: TOR_RELAY
+      value: "false"
+  exposedPorts: ["9050", "9051"]
+  entrypoint: ["/sbin/tini", "--", "/bin/sh", "/entrypoint.sh"]
+  volumes: ["/tor"]
+  cmd: ["tor", "-f", "/tor/torrc"]
+
+# Validate the environment contains the required tooling
+commandTests:
+  - name: curl
+    command: curl
+    args: ["--version"]
+  
+  - name: "tor --version"
+    command: "tor"
+    args: ["--version"]
+    expectedOutput: 
+      - "Tor version 0.4.6.6."
+      - "Tor is running on Linux with Libevent 2.1.12-stable, OpenSSL 1.1.1k, Zlib 1.2.11, Liblzma N/A, Libzstd N/A and Unknown N/A as libc."
+      - "Tor compiled with GCC version 10.3.1"
+    excludedError: [".+"]
+    exitCode: 0
+
+# Test the required configuration files exist
+fileExistenceTests:
+  - name: 'Check torrc exists'
+    path: '/tor/torrc'
+    shouldExist: true
+    uid: 10000
+    gid: 10001
+
+  - name: 'Check entrypoint exists'
+    path: '/entrypoint.sh'
+    shouldExist: true
+    uid: 10000
+    gid: 10001
+    
