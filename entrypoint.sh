@@ -39,7 +39,6 @@ proxy_config(){
     sed -i "/ControlPort.*/c\ControlPort ${TOR_PROXY_CONTROL_PORT}" /tor/torrc
     sed -i "/# CookieAuthentication 1/c\CookieAuthentication 1" /tor/torrc
     sed -i "/# CookieAuthFileGroupReadable 1/c\CookieAuthFileGroupReadable 1" /tor/torrc
-    sed -i "/# CookieAuthFile \/tor\/control.authcookie/c\CookieAuthFile \/tor\/control.authcookie" /tor/torrc
   fi
 
 }

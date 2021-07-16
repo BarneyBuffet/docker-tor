@@ -5,6 +5,7 @@
 #        CONTAINER SETTINGS        #
 ####################################
 DataDirectory /tor
+CookieAuthFile /tor/control.authcookie
 PidFile /var/run/tor/tor.pid
 HardwareAccel 1
 Log [handshake]notice [*]notice stderr
@@ -30,7 +31,6 @@ SocksPolicy reject *
 # HashedControlPassword 16:872860B76453A77D60CA2BB8C1A7042072093276A3D701AD684053EC4C
 # CookieAuthentication 1
 # CookieAuthFileGroupReadable 1
-# CookieAuthFile /tor/control.authcookie
 
 
 ####################################
