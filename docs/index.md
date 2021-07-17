@@ -12,12 +12,12 @@ This docker image runs a Tor service on an[ Alpine](https://www.alpinelinux.org/
 2. Tor __[hidden service](service.md)__ for onion websites (not supported yet)
 3. Tor __[relay](relay.md)__ to support the onion network (not supported yet)
 
-The docker image:
+This docker image will:
 
-* Starts with an Alpine linux base image
-* Downloads the Tor source code tarballs and associated signature file
-* Verifies the Tor source tarballs against [Roger Dingledine: 0xEB5A896A28988BF5](https://2019.www.torproject.org/include/keys.txt) key
-* Compiles Tor from source
+* Start with an Alpine linux base image
+* Download the Tor source code tarballs and associated signature file
+* Verify the Tor source tarballs against [Roger Dingledine: 0xEB5A896A28988BF5](https://2019.www.torproject.org/include/keys.txt) key
+* Compile Tor from source
 * Templates out the Tor config file [torrc](https://www.mankier.com/1/tor) _(this step is skipped if torrc.lock file exists in the `/tor` directory)_
 * Set a torrc.lock file to persist config file
 * Starts the tor service
@@ -26,7 +26,7 @@ During container creation the container will log creation of the config file, th
 
 This image exposes port `9050/tcp` and `9051/tcp`.
 
-Data can be persisted and config manual edited by mounting the `/tor`
+Data can be persisted and `torrc` config manually edited by mounting the `/tor` directory.
 
 ## How to use this image
 
@@ -62,9 +62,15 @@ services:
 
 ## Volume
 
-This image sets the Tor data directory to `/tor`, including the authorisation cookie. To persist Tor data and config you can mount the `/tor` directory with your image.
+This image sets the Tor data directory to `/tor`, including the authorisation cookie. To persist Tor data and config you can mount the `/tor` directory from your image.
 
-If the Tor configuration you are after isn't set by the runtime environmental variables you can modify the `/tor/torrc` for your custom configuration. The `torrc` file will persist while the `/tor/torrc.lock` file is present.
+If the Tor configuration you are after isn't set by the container environmental variables you can modify the `/tor/torrc` for your custom configuration. The `torrc` file will persist while the `/tor/torrc.lock` file is present.
+
+## Available Environmental Flags
+
+Below is a list of available environmental flags that can be set during container creation.
+
+...
 
 #### References
 

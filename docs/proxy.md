@@ -28,7 +28,7 @@ These defaults can be configured via docker environmental variables (options) di
 
 The following environmental (configuration) options are available when configuring the Socks5 proxy:
 
-### Socks5 Binding and Port
+### Binding and Port
 
 This image configures by default a proxy binding of all ips through `0.0.0.0` and a port of `9050` (the tor default port). Access to the proxy is restricted to RFC1918](https://datatracker.ietf.org/doc/html/rfc1918#section-3) local network IP addresses through accept policies discussed below. The socks5 binding and port will be set to `SocksPort 0` if `TOR_PROXY=false`, disabling the tor proxy client.
 
@@ -60,7 +60,7 @@ docker run -d --name tor \
   barneybuffet/tor:latest
 ```
 
-### Socks5 Accept Policy
+### Accept Policy
 
 Tor will allow/deny SOCKS requests based on IP address. By default this image will accept the localhost and all connections from [RFC1918](https://datatracker.ietf.org/doc/html/rfc1918#section-3) local network IP addresses. All other IP address will be rejected.
 
@@ -110,6 +110,76 @@ Will configure to
 ## Accept localhost and RFC1918 networks, reject all others
 SocksPolicy accept localhost,accept 192.168.1.0/24 
 SocksPolicy reject *
+```
+
+## Tor Control Port
+
+The [Control Port](https://gitweb.torproject.org/torspec.git/tree/control-spec.txt) is used to control communication with the Tor daemon. Once the Control Port is open it is important that a form of authentication is set. By default this docker image will default cookie authentication if password is not passed in. The authentication cookie is stored at `/tor/control.authcookie` and can be accessed if you mount the `/tor` directory.
+
+Default configuration.
+
+```bash
+## The port on which Tor will listen for local connections from Tor
+## controller applications, as documented in control-spec.txt.
+## https://gitweb.torproject.org/torspec.git/tree/control-spec.txt
+# ControlPort 9051
+
+## If you enable the controlport, be sure to enable one of these
+## authentication methods, to prevent attackers from accessing it.
+# HashedControlPassword 16:872860B76453A77D60CA2BB8C1A7042072093276A3D701AD684053EC4C
+# CookieAuthentication 1
+# CookieAuthFileGroupReadable 1
+```
+
+To open up the control port a port number needs to be set. Below will open a control port on 9051 and by default set authentication cookie.
+
+```bash
+docker run -d --name tor \
+  -e TOR_PROXY_CONTROL_PORT='9051' \
+  -p 9050:9050/tcp \
+  -p 9051:9051/tcp \
+  barneybuffet/tor:latest
+```
+
+The docker image will create the following configuration within `/tor/torrc`
+
+```bash
+## The port on which Tor will listen for local connections from Tor
+## controller applications, as documented in control-spec.txt.
+## https://gitweb.torproject.org/torspec.git/tree/control-spec.txt
+ControlPort 9051
+
+## If you enable the controlport, be sure to enable one of these
+## authentication methods, to prevent attackers from accessing it.
+# HashedControlPassword 16:872860B76453A77D60CA2BB8C1A7042072093276A3D701AD684053EC4C
+CookieAuthentication 1
+CookieAuthFileGroupReadable 1
+```
+
+If you would prefer to set a password for the control port this can be done with `TOR_PROXY_CONTROL_PASSWORD='<my secret password'`
+
+```bash
+docker run -d --name tor \
+  -e TOR_PROXY_CONTROL_PORT='9051' \
+  -e TOR_PROXY_CONTROL_PASSWORD='password' \
+  -p 9050:9050/tcp \
+  -p 9051:9051/tcp \
+  barneybuffet/tor:latest
+```
+
+The docker image will create the following configuration within `/tor/torrc`
+
+```bash
+## The port on which Tor will listen for local connections from Tor
+## controller applications, as documented in control-spec.txt.
+## https://gitweb.torproject.org/torspec.git/tree/control-spec.txt
+ControlPort 9051
+
+## If you enable the controlport, be sure to enable one of these
+## authentication methods, to prevent attackers from accessing it.
+HashedControlPassword 16:872860B76453A77D60CA2BB8C1A7042072093276A3D701AD684053EC4C
+#CookieAuthentication 1
+#CookieAuthFileGroupReadable 1
 ```
 
 ## Test Tor is working
