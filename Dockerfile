@@ -1,7 +1,11 @@
+# ALPINE_VER can be overwritten on with --build-arg
+ARG ALPINE_VER=3.14
+
 # Replace latest with a pinned version tag from https://hub.docker.com/_/alpine
-FROM alpine:3.14 AS tor-builder
+FROM alpine:$ALPINE_VER AS tor-builder
 
 # Get latest version from > https://dist.torproject.org/
+# Can be overwritten on with --build-arg at build time
 ARG TOR_VER=0.4.6.6
 ARG TORGZ=https://dist.torproject.org/tor-$TOR_VER.tar.gz
 
@@ -23,24 +27,10 @@ RUN tar xfz tor-$TOR_VER.tar.gz &&\
     ./configure &&\
     make install
 
-FROM alpine:3.14
-
-LABEL maintainer="Barney Buffet <BarneyBuffet@tutanota.com>"
-LABEL name="Tor network client (daemon)"
-LABEL version=$TOR_VER
-LABEL description="A docker image for tor"
-LABEL license="GNU"
-LABEL url="https://www.torproject.org"
-LABEL vcs-url="https://github.com/BarneyBuffet"
+########################################################################################
+FROM alpine:$ALPINE_VER
 
 # Non-root user for security purposes.
-#
-# UIDs below 10,000 are a security risk, as a container breakout could result
-# in the container being ran as a more privileged user on the host kernel with
-# the same UID.
-#
-# Static GID/UID is also useful for chown'ing files outside the container where
-# such a user does not exist.
 RUN addgroup --gid 10001 --system tor && \
     adduser  --uid 10000 --system --ingroup tor --home /home/tor tor
 
@@ -52,39 +42,45 @@ RUN apk --no-cache add --update \
 
 # Create tor directories
 RUN mkdir -p /var/run/tor && chown -R tor:tor /var/run/tor && chmod 2700 /var/run/tor && \
-    mkdir -p /tor && chown -R tor:tor /tor  && chmod 2700 /tor
+    mkdir -p /tor && chown -R tor:tor /tor  && chmod 777 /tor
 
-# Copy compiled tor from tor-builder
+# Copy compiled Tor daemon from tor-builder
 COPY --from=tor-builder /usr/local/ /usr/local/
 
-# Copy torrc and examples
-COPY --chown=tor:tor ./torrc /tor/torrc
-COPY --chown=tor:tor ./torrc.* /tor/
-
 # Copy entrypoint shell script for templating torrc
-COPY --chown=tor:tor --chmod=+x ./entrypoint.sh /entrypoint.sh
+COPY --chown=tor:tor --chmod=+x entrypoint.sh /usr/local/bin
 
-USER tor
-EXPOSE 9050/tcp 9051/tcp
+# Copy torrc and examples to tmp tor. Entrypoint will copy across to bind-volume
+COPY --chown=tor:tor ./torrc* /tmp/tor/
 
 HEALTHCHECK --interval=60s --timeout=15s --start-period=20s \
             CMD curl -sx localhost:8118 'https://check.torproject.org/' | \
             grep -qm1 Congratulations
 
-# Mount point for persitant data
-VOLUME ["/tor"]
+# Available environmental variables
+ENV TOR_LOG_CONFIG=true \
+    TOR_PROXY=true \
+    TOR_SERVICE=false \
+    TOR_RELAY=false \
+    TOR_PROXY_PORT= \
+    TOR_PROXY_ACCEPT= \
+    TOR_PROXY_CONTROL_PORT= \
+    TOR_PROXY_CONTROL_PASSWORD= \
+    TOR_PROXY_CONTROL_COOKIE= 
 
-# Working directory for neater docker container exec
+# Label the docke rimage
+LABEL maintainer="Barney Buffet <BarneyBuffet@tutanota.com>"
+LABEL name="Tor network client (daemon)"
+LABEL version=$TOR_VER
+LABEL description="A docker image for tor"
+LABEL license="GNU"
+LABEL url="https://www.torproject.org"
+LABEL vcs-url="https://github.com/BarneyBuffet"  
+
+USER tor
 WORKDIR /tor
-
-ENV TOR_PROXY=true\
-    TOR_SERVICE=false\
-    TOR_RELAY=false
-
-# Tini entry point for container init
-# ENTRYPOINT ["/sbin/tini", "--", "tor"]
-ENTRYPOINT ["/sbin/tini", "--", "/bin/sh", "/entrypoint.sh"]
-
-# Default arguments for your app (remove if you have none):
-# CMD ["-f", "/home/tor/tor/torrc"]
+EXPOSE 9050/tcp 9051/tcp
+ENTRYPOINT ["/sbin/tini", "--", "entrypoint.sh"]
 CMD ["tor", "-f", "/tor/torrc"]
+
+# https://dockerlabs.collabnix.com/docker/cheatsheet/

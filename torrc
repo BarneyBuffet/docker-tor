@@ -4,7 +4,7 @@
 ####################################
 #        CONTAINER SETTINGS        #
 ####################################
-DataDirectory /tor
+DataDirectory /tor/data
 CookieAuthFile /tor/control.authcookie
 PidFile /var/run/tor/tor.pid
 HardwareAccel 1

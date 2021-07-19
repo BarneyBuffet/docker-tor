@@ -1,4 +1,5 @@
 TOR_VER = 0.4.6.6
+ALPINE_VER=3.14
 
 login:
 	docker login
@@ -17,6 +18,7 @@ build:
 		-t barneybuffet/tor:$(TOR_VER) \
 		-t barneybuffet/tor:latest \
 		--build-arg TOR_VER=$(TOR_VER) \
+		--build-arg ALPINE_VER=$(ALPINE_VER) \
 		--push \
 		. \
 
