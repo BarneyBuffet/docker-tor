@@ -10,7 +10,7 @@ list-builders:
 initialise-builder:
 	docker buildx create --name mybuilder
 	docker buildx use mybuilder
-	docker buildx inspect --boostrap
+	docker buildx inspect mybuilder --bootstrap
 
 build:
 	docker buildx build \

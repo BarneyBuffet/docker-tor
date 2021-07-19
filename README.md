@@ -29,6 +29,10 @@ Data can be persisted and config manual edited by mounting the `/tor`
 
 ## How to use this image
 
+``bash
+docker run -d --name tor-proxy -v <absolute-path>:tor -p 9050:9050
+```
+
 Create a docker image with the following docker-compose.yml file
 
 ```bash

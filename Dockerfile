@@ -62,11 +62,11 @@ ENV TOR_LOG_CONFIG=true \
     TOR_PROXY=true \
     TOR_SERVICE=false \
     TOR_RELAY=false \
-    TOR_PROXY_PORT= \
-    TOR_PROXY_ACCEPT= \
-    TOR_PROXY_CONTROL_PORT= \
-    TOR_PROXY_CONTROL_PASSWORD= \
-    TOR_PROXY_CONTROL_COOKIE= 
+    TOR_PROXY_PORT=\
+    TOR_PROXY_ACCEPT=\
+    TOR_PROXY_CONTROL_PORT=\
+    TOR_PROXY_CONTROL_PASSWORD=\
+    TOR_PROXY_CONTROL_COOKIE=
 
 # Label the docke rimage
 LABEL maintainer="Barney Buffet <BarneyBuffet@tutanota.com>"

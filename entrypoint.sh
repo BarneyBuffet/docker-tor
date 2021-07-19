@@ -1,14 +1,16 @@
 #!/bin/bash
 set -eo pipefail
 
-config=/tor/torrc
+# Set config file variable
+TOR_CONFIG_FILE=/tor/torrc
 
 ##############################################################################
+## Display TOR torrc config in log
+##############################################################################
 echo_config(){
-  echo -e "\\n====================================- START ${config} -===================================="
-  # Display TOR torrc config in log
-  cat $config
-  echo -e "=====================================- END ${config} -=====================================\\n"
+  echo -e "\\n====================================- START ${TOR_CONFIG_FILE} -===================================="
+  cat $TOR_CONFIG_FILE
+  echo -e "=====================================- END ${TOR_CONFIG_FILE} -=====================================\\n"
 }
 
 ##############################################################################
@@ -18,41 +20,56 @@ proxy_config(){
 
   # Torrc default has proxy set to '0' so we need to have a default setting
   if [[ -n "${TOR_PROXY_PORT}" ]]; then
-    sed -i "/SocksPort.*/c\SocksPort ${TOR_PROXY_PORT}" $config
+    sed -i "/SocksPort.*/c\SocksPort ${TOR_PROXY_PORT}" $TOR_CONFIG_FILE
     echo "Updated proxy binding and port..."
   else
-    sed -i "/SocksPort.*/c\SocksPort 0.0.0.0:9050" $config
+    sed -i "/SocksPort.*/c\SocksPort 0.0.0.0:9050" $TOR_CONFIG_FILE
     echo "Set proxy binding and port to default value..."
   fi
 
   # IP or IP ranges accepted by the proxy. Everything else is rejected
   if [[ -n "${TOR_PROXY_ACCEPT}" ]]; then
-    sed -i "/SocksPolicy accept/c\SocksPolicy accept ${TOR_PROXY_ACCEPT}" $config
+    sed -i "/SocksPolicy accept/c\SocksPolicy ${TOR_PROXY_ACCEPT}" $TOR_CONFIG_FILE
     echo "Updated proxy accept policy..."
   fi
 
-  # Enable control port with a hashed password
-  if [[ -n "${TOR_PROXY_CONTROL_PORT}" ]] && [[ -n "${TOR_PROXY_CONTROL_PASSWORD}" ]]; then
-    sed -i "/ControlPort.*/c\ControlPort ${TOR_PROXY_CONTROL_PORT}" $config
-    HASHED_PASSWORD=$(tor --hash-password $TOR_PROXY_CONTROL_PASSWORD)
-    sed -i "/# HashedControlPassword.*/c\HashedControlPassword $HASHED_PASSWORD" $config
-  # Enable control port with an authentication cookie. Else if only control port default to cookie
-  elif [[ -n "${TOR_PROXY_CONTROL_PORT}" ]] && $TOR_PROXY_CONTROL_COOKIE || [[ -n "${TOR_PROXY_CONTROL_PORT}" ]]; then
-    sed -i "/ControlPort.*/c\ControlPort ${TOR_PROXY_CONTROL_PORT}" $config
-    sed -i "/# CookieAuthentication 1/c\CookieAuthentication 1" $config
-    sed -i "/# CookieAuthFileGroupReadable 1/c\CookieAuthFileGroupReadable 1" $config
+  if [[ -n "${TOR_PROXY_CONTROL_PORT}" ]]; then
+    # If we have a password hash it and set
+    if [[ -n "${TOR_PROXY_CONTROL_PASSWORD}" ]]; then
+      sed -i "/ControlPort.*/c\ControlPort ${TOR_PROXY_CONTROL_PORT}" $TOR_CONFIG_FILE
+      HASHED_PASSWORD=$(tor --hash-password $TOR_PROXY_CONTROL_PASSWORD)
+      sed -i "/# HashedControlPassword.*/c\HashedControlPassword $HASHED_PASSWORD" $TOR_CONFIG_FILE
+      echo "Opened control port to ${TOR_PROXY_CONTROL_PORT} with a password..."
+    fi
+    # If cookie is true then set 1
+    if $TOR_PROXY_CONTROL_COOKIE; then
+      sed -i "/ControlPort.*/c\ControlPort ${TOR_PROXY_CONTROL_PORT}" $TOR_CONFIG_FILE
+      sed -i "/# CookieAuthentication 1/c\CookieAuthentication 1" $TOR_CONFIG_FILE
+      sed -i "/# CookieAuthFileGroupReadable 1/c\CookieAuthFileGroupReadable 1" $TOR_CONFIG_FILE
+      echo "Opened control port to ${TOR_PROXY_CONTROL_PORT} with an authorisation cookie..."
+    fi
+    # If we don't have a password and no cookie flag, set cookie
+    if [[ -z "${TOR_PROXY_CONTROL_PASSWORD}" ]] && [[ -z "${TOR_PROXY_CONTROL_COOKIE}" ]]; then
+      sed -i "/ControlPort.*/c\ControlPort ${TOR_PROXY_CONTROL_PORT}" $TOR_CONFIG_FILE
+      sed -i "/# CookieAuthentication 1/c\CookieAuthentication 1" $TOR_CONFIG_FILE
+      sed -i "/# CookieAuthFileGroupReadable 1/c\CookieAuthFileGroupReadable 1" $TOR_CONFIG_FILE
+      echo "Opened control port to ${TOR_PROXY_CONTROL_PORT} with an authorisation cookie..."
+    fi
+
   fi
 
 }
 
 ##############################################################################
+## Initialise docker image
+##############################################################################
 init(){
   echo -e "\\n====================================- INITIALISING TOR -===================================="
 
-  # Copy torrc config file into bind volume
+  # Copy torrc config file into bind-volume
   cp /tmp/tor/torrc* /tor/
   rm -rf /tmp/tor
-  echo "Copied torrc into /tor"
+  echo "Copied torrc into /tor..."
 
   # Are we setting up a Tor proxy
   if $TOR_PROXY; then
@@ -60,13 +77,12 @@ init(){
     proxy_config
     echo "Tor proxy configured..."
   else
-    sed -i "/SocksPort.*/c\SocksPort 0" $config
+    sed -i "/SocksPort.*/c\SocksPort 0" $TOR_CONFIG_FILE
     echo "Disabled Tor proxy..."
   fi
 
   # Are we setting up a Tor hidden service
   if $TOR_SERVICE; then
-    # echo "Configuring Tor hidden service..."
     echo "Tor hidden service not supported in the docker image yet!"
   fi
 
@@ -77,12 +93,14 @@ init(){
 }
 
 ##############################################################################
+## Main shell script function
+##############################################################################
 main() {
 
   # Initialise container if there is no lock file
-  if [[ ! -e $config.lock ]]; then 
+  if [[ ! -e $TOR_CONFIG_FILE.lock ]]; then 
     init
-    echo "Only run init once. Delete this file to re-init torrc on container start up." > $config.lock
+    echo "Only run init once. Delete this file to re-init torrc on container start up." > $TOR_CONFIG_FILE.lock
   else
     echo "Torrc already configured. Skipping config templating..."
   fi
@@ -93,6 +111,7 @@ main() {
   fi
 }
 
+# Call main function
 main
 
 echo -e "\\n====================================- STARTING TOR -===================================="
