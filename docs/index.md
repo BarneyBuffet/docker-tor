@@ -70,7 +70,18 @@ If the Tor configuration you are after isn't set by the container environmental 
 
 Below is a list of available environmental flags that can be set during container creation.
 
-...
+| Flag | Choices/Default | Comments |
+|:-----|:----------------|:---------|
+| TOR_LOG_CONFIG | true/__false__ | Should the tor config file `torrc`. This can be helpful when setting up a new Tor daemon |
+| TOR_PROXY      | __true__/flase | Set up the Tor daemon as a Socks5 proxy |
+| TOR_SERVICE | true/__false__ | Set up the Tor daemon with hidden services |
+| TOR_RELAY | true/__false__ | ** NOT IMPLEMENTED YET ** |
+| TOR_PROXY_PORT | string (9050) | What port the Tor daemon should listen to for proxy requests |
+| TOR_PROXY_ACCEPT | Accept localhost and RFC1918 networks, reject all others | What IP addresses are allowed to route through the proxy |
+| TOR_PROXY_CONTROL_PORT | string (9051) | What port should the Tor daemon be controlled on. If enabled cookie authentication is also enabled by default |
+| TOR_PROXY_CONTROL_PASSWORD | string | Authentication password for using the Tor control port |
+| TOR_PROXY_CONTROL_COOKIE | __true__/false | Cookie to confirm when Tor control port request sent |
+| TOR_SERVICE_HOSTS | hostname=wan-port:redict-ip:rediect-port | Tor hidden service configuration |
 
 #### References
 

@@ -58,15 +58,16 @@ HEALTHCHECK --interval=60s --timeout=15s --start-period=20s \
             grep -qm1 Congratulations
 
 # Available environmental variables
-ENV TOR_LOG_CONFIG=true \
+ENV TOR_LOG_CONFIG=false \
     TOR_PROXY=true \
     TOR_SERVICE=false \
     TOR_RELAY=false \
-    TOR_PROXY_PORT=\
-    TOR_PROXY_ACCEPT=\
-    TOR_PROXY_CONTROL_PORT=\
-    TOR_PROXY_CONTROL_PASSWORD=\
-    TOR_PROXY_CONTROL_COOKIE=
+    TOR_PROXY_PORT= \
+    TOR_PROXY_ACCEPT= \
+    TOR_PROXY_CONTROL_PORT= \
+    TOR_PROXY_CONTROL_PASSWORD= \
+    TOR_PROXY_CONTROL_COOKIE= \
+    TOR_SERVICE_HOSTS=
 
 # Label the docke rimage
 LABEL maintainer="Barney Buffet <BarneyBuffet@tutanota.com>"

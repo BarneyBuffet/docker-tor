@@ -3,6 +3,8 @@ set -eo pipefail
 
 # Set config file variable
 TOR_CONFIG_FILE=/tor/torrc
+TOR_CONFIG_FILE_LOCK=$TOR_CONFIG_FILE.locl
+SERVICE_DIR=/tor/hidden_services
 
 ##############################################################################
 ## Display TOR torrc config in log
@@ -61,6 +63,53 @@ proxy_config(){
 }
 
 ##############################################################################
+## Config tor hidden services
+##############################################################################
+hidden_services_config(){
+
+  # Convert service hosts string into an array of hosts
+  hosts=(${TOR_SERVICE_HOSTS// / })
+
+  # Create hidden_services directory and set permission
+  mkdir -p /tor/hidden_services && chown -R tor:tor /tor/hidden_services  && chmod 777 /tor/hidden_services
+
+  # Parse through each host
+  for host in ${hosts[@]}; do
+
+    # Convert host string into an array of hostname and services
+    host_details=(${host//=/ })
+
+    # Set hostname
+    service_hostname=${host_details[0]}
+    
+    # Convert services string into an array of services
+    services=(${host_details[1]//,/ })
+    
+    # Parse over services array
+    for service in ${services[@]}; do
+      # Convert service string to array of items
+      item=(${service//:/ })
+
+      # Define hidden service variables
+      service_port=${item[0]}
+      redirect_host=${item[1]}
+      redirect_port=${item[2]}
+
+      # Write service to line in file
+      sed -i "/## Hidden Services/a\HiddenServicePort ${service_port} ${redirect_host}:${redirect_port}" $TOR_CONFIG_FILE
+    done    
+
+    # Write service name to line to file
+    # I go after services because I am inserted after the same line, so we need to do it backwards.
+    sed -i "/## Hidden Services/a\ \nHiddenServiceDir /tor/hidden_services/${service_hostname}" $TOR_CONFIG_FILE
+    echo "Added hidden service ${service_hostname} to torrc..."
+
+  done
+
+}
+
+
+##############################################################################
 ## Initialise docker image
 ##############################################################################
 init(){
@@ -83,7 +132,9 @@ init(){
 
   # Are we setting up a Tor hidden service
   if $TOR_SERVICE; then
-    echo "Tor hidden service not supported in the docker image yet!"
+    echo "Configure Tor hidden services..."
+    hidden_services_config
+    echo "Tor hidden services configured..."
   fi
 
   # Are we setting up a Tor relay
