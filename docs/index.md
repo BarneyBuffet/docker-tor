@@ -4,6 +4,8 @@
 
 [The Tor Project](https://www.torproject.org/) is a nonprofit organization primarily responsible for maintaining software for the Tor anonymity network. The Tor browser is the most well known piece of software maintained. The Tor Browser uses the onion network to anonymize browsing and the onion network relies on tor relays to achieve this.
 
+Tor can't help you if you use it wrong! Learn how to be safe at [https://www.torproject.org/download/download#warning](https://www.torproject.org/download/download#warning)
+
 ## What is this image
 
 This docker image runs a Tor service on an[ Alpine](https://www.alpinelinux.org/) linux base image. The Tor service that can be configure, as single or combination of a:
@@ -47,12 +49,18 @@ services:
     container_name: tor
     image: barneybuffet/tor:latest
     environment:
+      TOR_LOG_CONFIG:'false'
       TOR_PROXY: 'true'
       TOR_PROXY_PORT: '9050'
       TOR_PROXY_ACCEPT: 'accept 127.0.0.1,accept 10.0.0.0/8,accept 172.16.0.0/12,accept 192.168.0.0/16'
       TOR_PROXY_CONTROL_PORT: '9051'
       TOR_PROXY_CONTROL_PASSWORD: 'password'
       TOR_PROXY_CONTROL_COOKIE: 'true'
+      TOR_SERVICE: 'false'
+      TOR_RELAY: 'false'
+      TOR_SERVICE_HOSTS='radarr=80:192.168.1.12'
+      TOR_SERVICE_HOSTS_CLIENTS='radarr=barney'
+
     volumes:
       - tor:/tor/
       ports:
@@ -82,10 +90,12 @@ Below is a list of available environmental flags that can be set during containe
 | TOR_PROXY_CONTROL_PASSWORD | string | Authentication password for using the Tor control port |
 | TOR_PROXY_CONTROL_COOKIE | __true__/false | Cookie to confirm when Tor control port request sent |
 | TOR_SERVICE_HOSTS | hostname=wan-port:redict-ip:rediect-port | Tor hidden service configuration |
+| TOR_SERVICE_HOSTS_CLIENTS | hostname:client-1,client-2,... | Authorised clients for hostname |
 
 #### References
 
 * [The Tor Project](https://gitlab.torproject.org/tpo)
+* [How to install Tor](http://xmrhfasfg5suueegrnc4gsgyi2tyclcy5oz7f5drnrodmdtob6t2ioyd.onion/onion-services/setup/install/index.html)
 * [hexops/dockerfile - Dockerfile best practices](https://github.com/hexops/dockerfile)
 * [Blockstream/bitcoin-images/tor](https://github.com/Blockstream/bitcoin-images/tree/master/tor)
 * [RaspiBolt/Privacy](https://stadicus.github.io/RaspiBolt/raspibolt_22_privacy.html)

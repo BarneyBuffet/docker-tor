@@ -8,18 +8,32 @@ FROM alpine:$ALPINE_VER AS tor-builder
 # Can be overwritten on with --build-arg at build time
 ARG TOR_VER=0.4.6.6
 ARG TORGZ=https://dist.torproject.org/tor-$TOR_VER.tar.gz
+# http://jqyzxhjk6psc6ul5jnfwloamhtyh7si74b4743k2qgpskwwxrzhsxmad.onion/include/keys.txt
+ARG TOR_KEY=0x6AFEE6D49E92B601
 
 # Install tor make requirements
 RUN apk --no-cache add --update \
-    alpine-sdk gnupg libevent libevent-dev zlib zlib-dev openssl openssl-dev
+    alpine-sdk \
+    gnupg \
+    libevent libevent-dev \
+    zlib zlib-dev \
+    openssl openssl-dev
 
 # Get Tor key file and tar file
 RUN wget $TORGZ.asc &&\
     wget $TORGZ
 
-# Verify Tor source tarballs asc signatures
-RUN gpg --keyserver pool.sks-keyservers.net --recv-keys 0xEB5A896A28988BF5 && \
-    gpg --verify tor-$TOR_VER.tar.gz.asc || { echo "Couldn't verify sig"; exit; }
+############################################
+## Verify Tor source tarballs asc signatures
+## Get signature from key server
+RUN gpg --keyserver hkp://keyserver.ubuntu.com --recv-keys ${TOR_KEY}
+# Verify that the checksums file is PGP signed by the release signing key
+RUN gpg --verify tor-${TOR_VER}.tar.gz.asc tor-${TOR_VER}.tar.gz 2>&1 |\
+    grep -q "gpg: Good signature" ||\
+    { echo "Couldn't verify signature!"; exit 1; }
+RUN gpg --verify tor-${TOR_VER}.tar.gz.asc tor-${TOR_VER}.tar.gz 2>&1 |\
+    grep -q "Primary key fingerprint: 2133 BC60 0AB1 33E1 D826  D173 FE43 009C 4607 B1FB" ||\
+    { echo "Couldn't verify Primary key fingerprint!"; exit 1; }
 
 # Build tor
 RUN tar xfz tor-$TOR_VER.tar.gz &&\
@@ -38,7 +52,13 @@ RUN addgroup --gid 10001 --system tor && \
 # bind-tools is needed for DNS resolution to work in *some* Docker networks
 # Tini allows us to avoid several Docker edge cases, see https://github.com/krallin/tini.
 RUN apk --no-cache add --update \
-    bash curl libevent tini bind-tools
+    bash \
+    curl \
+    libevent \
+    tini \
+    bind-tools \
+    openssl \
+    coreutils
 
 # Create tor directories
 RUN mkdir -p /var/run/tor && chown -R tor:tor /var/run/tor && chmod 2700 /var/run/tor && \
@@ -49,10 +69,13 @@ COPY --from=tor-builder /usr/local/ /usr/local/
 
 # Copy entrypoint shell script for templating torrc
 COPY --chown=tor:tor --chmod=+x entrypoint.sh /usr/local/bin
+# Copy client authentication for private/public keys
+COPY --chown=tor:tor --chmod=+x client_auth.sh /usr/local/bin
 
 # Copy torrc and examples to tmp tor. Entrypoint will copy across to bind-volume
 COPY --chown=tor:tor ./torrc* /tmp/tor/
 
+# Docker health check
 HEALTHCHECK --interval=60s --timeout=15s --start-period=20s \
             CMD curl -sx localhost:8118 'https://check.torproject.org/' | \
             grep -qm1 Congratulations
@@ -67,9 +90,10 @@ ENV TOR_LOG_CONFIG=false \
     TOR_PROXY_CONTROL_PORT= \
     TOR_PROXY_CONTROL_PASSWORD= \
     TOR_PROXY_CONTROL_COOKIE= \
-    TOR_SERVICE_HOSTS=
+    TOR_SERVICE_HOSTS= \
+    TOR_SERVICE_HOSTS_CLIENTS=
 
-# Label the docke rimage
+# Label the docker image
 LABEL maintainer="Barney Buffet <BarneyBuffet@tutanota.com>"
 LABEL name="Tor network client (daemon)"
 LABEL version=$TOR_VER

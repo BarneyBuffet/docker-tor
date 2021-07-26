@@ -65,6 +65,34 @@ proxy_config(){
 ##############################################################################
 ## Config tor hidden services
 ##############################################################################
+client_authorization_config(){
+  # Convert client hosts string into an array of hosts
+  hosts=(${TOR_SERVICE_HOSTS_CLIENTS// / })
+
+    # Parse through each host
+  for host in ${hosts[@]}; do
+
+    # Convert host string into an array of hostname and clients
+    host_details=(${host//=/ })
+
+    # Set hostname
+    service_hostname=${host_details[0]}
+    
+    # Convert clients string into an array of clients
+    clients=(${host_details[1]//,/ })
+    
+    # Parse over clients array
+    for client in ${clients[@]}; do
+
+      # Use client_auth.sh bash script to create public/private keys
+      client_auth.sh -s ${service_hostname} -c ${client}
+
+    done
+  done
+
+
+}
+
 hidden_services_config(){
 
   # Convert service hosts string into an array of hosts
@@ -134,6 +162,7 @@ init(){
   if $TOR_SERVICE; then
     echo "Configure Tor hidden services..."
     hidden_services_config
+    client_authorization_config
     echo "Tor hidden services configured..."
   fi
 
