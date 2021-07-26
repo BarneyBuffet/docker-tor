@@ -29,7 +29,7 @@ Data can be persisted and config manual edited by mounting the `/tor`
 
 ## How to use this image
 
-``bash
+```bash
 docker run -d --name tor-proxy -v <absolute-path>:tor -p 9050:9050
 ```
 
@@ -44,12 +44,17 @@ services:
     container_name: tor
     image: barneybuffet/tor:latest
     environment:
+      TOR_LOG_CONFIG:'false'
       TOR_PROXY: 'true'
       TOR_PROXY_PORT: '9050'
       TOR_PROXY_ACCEPT: 'accept 127.0.0.1,accept 10.0.0.0/8,accept 172.16.0.0/12,accept 192.168.0.0/16'
       TOR_PROXY_CONTROL_PORT: '9051'
       TOR_PROXY_CONTROL_PASSWORD: 'password'
       TOR_PROXY_CONTROL_COOKIE: 'true'
+      TOR_SERVICE: 'false'
+      TOR_RELAY: 'false'
+      TOR_SERVICE_HOSTS='radarr=80:192.168.1.12'
+      TOR_SERVICE_HOSTS_CLIENTS='radarr=barney'
     volumes:
       - ${PWD}:/tor/
     ports:
