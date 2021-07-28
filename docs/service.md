@@ -59,6 +59,12 @@ The bash script will generate a private and matching public key. The keys are pu
 * Public Key: `/tor/hidden_services/<hostname>/authorized_clients/<client>.auth`
 * Private Key: `/tor/auth_privates/<hostname>/<client>.auth_private`
 
+A new client private/public key can be generated at any time by opening a terminal in the docker container and running the bash script.
+
+```bash
+client_auth.sh --service <hostname> --client alice
+```
+
 To copy the private key for use with your Tor browser in osx open a terminal in the `/tor/hidden_services/auth_privates/<hostname>/` binded port and use the following command.
 
 ```bash

@@ -5,6 +5,7 @@ theme:
 nav:
     - Home: index.md
     - Proxy: proxy.md
+    - Control: control.md
     - Hidden Service: service.md
     - Relay: relay.md
     - Build: build.md

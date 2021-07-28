@@ -81,17 +81,19 @@ HEALTHCHECK --interval=60s --timeout=15s --start-period=20s \
             grep -qm1 Congratulations
 
 # Available environmental variables
-ENV TOR_LOG_CONFIG=false \
-    TOR_PROXY=true \
-    TOR_SERVICE=false \
-    TOR_RELAY=false \
-    TOR_PROXY_PORT= \
-    TOR_PROXY_ACCEPT= \
-    TOR_PROXY_CONTROL_PORT= \
-    TOR_PROXY_CONTROL_PASSWORD= \
-    TOR_PROXY_CONTROL_COOKIE= \
-    TOR_SERVICE_HOSTS= \
-    TOR_SERVICE_HOSTS_CLIENTS=
+ENV TOR_LOG_CONFIG="true" \
+    TOR_PROXY="true" \
+    TOR_PROXY_PORT="9050" \
+    TOR_PROXY_ACCEPT="accept 127.0.0.1,accept 10.0.0.0/8,accept 172.16.0.0/12,accept 192.168.0.0/16" \
+    TOR_CONTROl="false" \
+    TOR_CONTROL_PORT="9051" \
+    TOR_CONTROL_PASSWORD="***-password-***" \
+    TOR_CONTROL_COOKIE="true" \
+    TOR_SERVICE="false" \
+    TOR_SERVICE_HOSTS="bitcoin=80:192.168.0.3:80" \
+    TOR_SERVICE_HOSTS_CLIENTS="bitcoin=alice"\
+    TOR_RELAY="false"
+
 
 # Label the docker image
 LABEL maintainer="Barney Buffet <BarneyBuffet@tutanota.com>"

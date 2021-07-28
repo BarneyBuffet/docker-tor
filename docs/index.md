@@ -53,13 +53,14 @@ services:
       TOR_PROXY: 'true'
       TOR_PROXY_PORT: '9050'
       TOR_PROXY_ACCEPT: 'accept 127.0.0.1,accept 10.0.0.0/8,accept 172.16.0.0/12,accept 192.168.0.0/16'
-      TOR_PROXY_CONTROL_PORT: '9051'
-      TOR_PROXY_CONTROL_PASSWORD: 'password'
-      TOR_PROXY_CONTROL_COOKIE: 'true'
+      TOR_CONTROL: 'false'
+      TOR_CONTROL_PORT: '9051'
+      TOR_CONTROL_PASSWORD: 'password'
+      TOR_CONTROL_COOKIE: 'true'
       TOR_SERVICE: 'false'
+      TOR_SERVICE_HOSTS='bitcoin=80:192.168.0.3:80'
+      TOR_SERVICE_HOSTS_CLIENTS='bitcoin=alice'
       TOR_RELAY: 'false'
-      TOR_SERVICE_HOSTS='radarr=80:192.168.1.12'
-      TOR_SERVICE_HOSTS_CLIENTS='radarr=barney'
 
     volumes:
       - tor:/tor/
@@ -80,17 +81,19 @@ Below is a list of available environmental flags that can be set during containe
 
 | Flag | Choices/Default | Comments |
 |:-----|:----------------|:---------|
-| TOR_LOG_CONFIG | true/__false__ | Should the tor config file `torrc`. This can be helpful when setting up a new Tor daemon |
-| TOR_PROXY      | __true__/flase | Set up the Tor daemon as a Socks5 proxy |
-| TOR_SERVICE | true/__false__ | Set up the Tor daemon with hidden services |
-| TOR_RELAY | true/__false__ | ** NOT IMPLEMENTED YET ** |
+| TOR_LOG_CONFIG | true/__false__ | Should the tor config file `torrc` be echo'd to the log. This can be helpful when setting up a new Tor daemon |
+| TOR_PROXY      | __true__/false | Set up the Tor daemon as a Socks5 proxy |
 | TOR_PROXY_PORT | string (9050) | What port the Tor daemon should listen to for proxy requests |
 | TOR_PROXY_ACCEPT | Accept localhost and RFC1918 networks, reject all others | What IP addresses are allowed to route through the proxy |
-| TOR_PROXY_CONTROL_PORT | string (9051) | What port should the Tor daemon be controlled on. If enabled cookie authentication is also enabled by default |
-| TOR_PROXY_CONTROL_PASSWORD | string | Authentication password for using the Tor control port |
-| TOR_PROXY_CONTROL_COOKIE | __true__/false | Cookie to confirm when Tor control port request sent |
+| TOR_CONTROL | true/__false__ | Should the Tor control be enabled |
+| TOR_CONTROL_PORT | string (9051) | What port should the Tor daemon be controlled on. If enabled cookie authentication is also enabled by default |
+| TOR_CONTROL_PASSWORD | string | Authentication password for using the Tor control port |
+| TOR_CONTROL_COOKIE | __true__/false | Cookie to confirm when Tor control port request sent |
+| TOR_SERVICE | true/__false__ | Set up the Tor daemon with hidden services |
 | TOR_SERVICE_HOSTS | hostname=wan-port:redict-ip:rediect-port | Tor hidden service configuration |
 | TOR_SERVICE_HOSTS_CLIENTS | hostname:client-1,client-2,... | Authorised clients for hostname |
+| TOR_RELAY | true/__false__ | ** NOT IMPLEMENTED YET ** |
+
 
 #### References
 
