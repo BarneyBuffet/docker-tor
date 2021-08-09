@@ -1,5 +1,9 @@
 # Docker Tor
 
+This repository is for a Tor daemon multiarch docker image.
+
+Full documentation for this Docker image can be found at [https://barneybuffet.github.io/docker-tor/](https://barneybuffet.github.io/docker-tor/)
+
 ## What is Tor
 
 [The Tor Project](https://www.torproject.org/) is a nonprofit organization primarily responsible for maintaining software for the Tor anonymity network. The Tor browser is the most well known piece of software maintained. The Tor Browser uses the onion network to anonymize browsing and the onion network relies on tor relays to achieve this.
@@ -9,13 +13,13 @@
 This docker image runs a Tor service on an[ Alpine](https://www.alpinelinux.org/) linux base image. The Tor service that can be configure, as single or combination of a:
 
 1. Tor __Socks5 proxy__ into the onion network (default)
-2. Tor __hidden service__ for onion websites (not supported yet)
+2. Tor __hidden service__ for onion websites. Including client public/private key generation.
 3. Tor __relay__ to support the onion network (not supported yet)
 
 The docker image:
 
 * Starts with an Alpine linux base image
-* Downloads the Tor source code tarballs and associated signature file
+* Downloads the Tor source code tarballs signature file
 * Verifies the Tor source tarballs against [Roger Dingledine: 0xEB5A896A28988BF5](https://2019.www.torproject.org/include/keys.txt) key
 * Compiles Tor from source
 * Templates out the Tor config file [torrc](https://www.mankier.com/1/tor)
@@ -69,7 +73,3 @@ services:
 * [Docker Tor - Documentation](https://barneybuffet.github.io/docker-tor/)
 
 ### Start Visual Studio code with Tor Proxy
-
-```bash
-code --proxy-server="Socks5=tor.home:9050"
-```

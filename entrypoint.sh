@@ -36,7 +36,7 @@ proxy_config(){
 control_config(){
   # If we have a password hash it and set
   if [[ -n "${TOR_CONTROL_PASSWORD}" ]]; then
-    sed -i "/ControlPort.*/c\ControlPort ${TOR_CONTROL_PORT}" $TOR_CONFIG_FILE
+    sed -i "/# ControlPort.*/c\ControlPort ${TOR_CONTROL_PORT}" $TOR_CONFIG_FILE
     HASHED_PASSWORD=$(tor --hash-password $TOR_CONTROL_PASSWORD)
     sed -i "/# HashedControlPassword.*/c\HashedControlPassword $HASHED_PASSWORD" $TOR_CONFIG_FILE
     echo "Opened control port to ${TOR_CONTROL_PORT} with a password..."
@@ -44,7 +44,7 @@ control_config(){
 
   # If cookie is true then set 1
   if $TOR_CONTROL_COOKIE; then
-    sed -i "/ControlPort.*/c\ControlPort ${TOR_CONTROL_PORT}" $TOR_CONFIG_FILE
+    sed -i "/# ControlPort.*/c\ControlPort ${TOR_CONTROL_PORT}" $TOR_CONFIG_FILE
     sed -i "/# CookieAuthentication 1/c\CookieAuthentication 1" $TOR_CONFIG_FILE
     sed -i "/# CookieAuthFileGroupReadable 1/c\CookieAuthFileGroupReadable 1" $TOR_CONFIG_FILE
     echo "Opened control port to ${TOR_CONTROL_PORT} with an authorisation cookie..."
@@ -52,7 +52,7 @@ control_config(){
 
   # If we don't have a password and no cookie flag, set cookie
   if [[ -z "${TOR_CONTROL_PASSWORD}" ]] && [[ -z "${TOR_CONTROL_COOKIE}" ]]; then
-    sed -i "/ControlPort.*/c\ControlPort ${TOR_CONTROL_PORT}" $TOR_CONFIG_FILE
+    sed -i "/# ControlPort.*/c\ControlPort ${TOR_CONTROL_PORT}" $TOR_CONFIG_FILE
     sed -i "/# CookieAuthentication 1/c\CookieAuthentication 1" $TOR_CONFIG_FILE
     sed -i "/# CookieAuthFileGroupReadable 1/c\CookieAuthFileGroupReadable 1" $TOR_CONFIG_FILE
     echo "Opened control port to ${TOR_CONTROL_PORT} with an authorisation cookie..."
@@ -158,7 +158,7 @@ init(){
     control_config
     echo "Tor control configured..."
   else
-    sed -i "/ControlPort.*/c\#ControlPort ${TOR_PROXY_CONTROL_PORT}" $TOR_CONFIG_FILE
+    sed -i "/ControlPort.*/c\# ControlPort ${TOR_PROXY_CONTROL_PORT}" $TOR_CONFIG_FILE
   fi
 
   # Are we setting up a Tor hidden service
