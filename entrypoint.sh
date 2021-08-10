@@ -3,7 +3,6 @@ set -eo pipefail
 
 # Set config file variable
 TOR_CONFIG_FILE=/tor/torrc
-TOR_CONFIG_FILE_LOCK=$TOR_CONFIG_FILE.locl
 SERVICE_DIR=/tor/hidden_services
 
 ##############################################################################
