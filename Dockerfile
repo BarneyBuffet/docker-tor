@@ -8,7 +8,6 @@ FROM alpine:$ALPINE_VER AS tor-builder
 # Can be overwritten on with --build-arg at build time
 ARG TOR_VER=0.4.6.6
 ARG TORGZ=https://dist.torproject.org/tor-$TOR_VER.tar.gz
-# http://jqyzxhjk6psc6ul5jnfwloamhtyh7si74b4743k2qgpskwwxrzhsxmad.onion/include/keys.txt
 ARG TOR_KEY=0x6AFEE6D49E92B601
 
 # Install tor make requirements
@@ -80,19 +79,20 @@ HEALTHCHECK --interval=60s --timeout=15s --start-period=20s \
             CMD curl -sx localhost:8118 'https://check.torproject.org/' | \
             grep -qm1 Congratulations
 
-# Available environmental variables
-ENV TOR_LOG_CONFIG="false" \
-    TOR_PROXY="true" \
-    TOR_PROXY_PORT="9050" \
-    TOR_PROXY_ACCEPT="accept 127.0.0.1,accept 10.0.0.0/8,accept 172.16.0.0/12,accept 192.168.0.0/16" \
-    TOR_CONTROl="false" \
-    TOR_CONTROL_PORT="9051" \
-    TOR_CONTROL_PASSWORD="***-password-***" \
-    TOR_CONTROL_COOKIE="true" \
-    TOR_SERVICE="false" \
-    TOR_SERVICE_HOSTS="nextcloud=80:192.168.0.3:80" \
-    TOR_SERVICE_HOSTS_CLIENTS="nextcloud=alice,bob"\
-    TOR_RELAY="false"
+## ENV VARIABLES
+## Default values
+ENV TOR_LOG_CONFIG="false"
+ENV TOR_PROXY="true"
+ENV TOR_PROXY_PORT="9050"
+ENV TOR_PROXY_ACCEPT="accept 127.0.0.1,accept 10.0.0.0/8,accept 172.16.0.0/12,accept 192.168.0.0/16"
+ENV TOR_CONTROL="false"
+ENV TOR_CONTROL_PORT="9051"
+ENV TOR_CONTROL_PASSWORD="***-password-***"
+ENV TOR_CONTROL_COOKIE="true"
+ENV TOR_SERVICE="false"
+ENV TOR_SERVICE_HOSTS="nextcloud=80:192.168.0.3:80"
+ENV TOR_SERVICE_HOSTS_CLIENTS="nextcloud=alice,bob"
+ENV TOR_RELAY="false"
 
 
 # Label the docker image

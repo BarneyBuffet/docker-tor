@@ -152,7 +152,7 @@ init(){
     echo "Disabled Tor proxy..."
   fi
 
-  if $TOR_CONTROl; then
+  if $TOR_CONTROL; then
     echo "Configuring Tor control..."
     control_config
     echo "Tor control configured..."
