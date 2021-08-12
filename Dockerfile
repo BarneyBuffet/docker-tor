@@ -61,22 +61,28 @@ RUN apk --no-cache add --update \
     tini \
     bind-tools \
     openssl \
-    coreutils
+    coreutils \
+    python3 py3-pip \
+    && pip install nyx
 
 ## Create tor directories
 RUN mkdir -p /var/run/tor && chown -R tor:tor /var/run/tor && chmod 2700 /var/run/tor && \
-    mkdir -p /tor && chown -R tor:tor /tor  && chmod 777 /tor
+    mkdir -p /tor/.tor && chown -R tor:tor /tor  && chmod 777 /tor
 
 ## Copy compiled Tor daemon from tor-builder
 COPY --from=tor-builder /usr/local/ /usr/local/
 
 ## Copy entrypoint shell script for templating torrc
 COPY --chown=tor:tor --chmod=+x entrypoint.sh /usr/local/bin
+
 ## Copy client authentication for private/public keys
 COPY --chown=tor:tor --chmod=+x client_auth.sh /usr/local/bin
 
 ## Copy torrc config and examples to tmp tor. Entrypoint will copy across to bind-volume
 COPY --chown=tor:tor ./torrc* /tmp/tor/
+
+## Copy nyxrc config into default location
+COPY --chown=tor:tor ./nyxrc /home/tor/.nyx/config
 
 ## Docker health check
 HEALTHCHECK --interval=60s --timeout=15s --start-period=20s \

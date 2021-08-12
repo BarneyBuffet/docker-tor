@@ -5,7 +5,8 @@
 #        CONTAINER SETTINGS        #
 ####################################
 DataDirectory /tor/data
-CookieAuthFile /tor/control.authcookie
+CookieAuthFile /tor/control_auth_cookie
+CookieAuthFileGroupReadable 1
 PidFile /var/run/tor/tor.pid
 HardwareAccel 1
 Log [handshake]notice [*]notice stderr
@@ -31,7 +32,6 @@ SocksPolicy reject *
 ## authentication methods, to prevent attackers from accessing it.
 # HashedControlPassword 16:872860B76453A77D60CA2BB8C1A7042072093276A3D701AD684053EC4C
 # CookieAuthentication 1
-# CookieAuthFileGroupReadable 1
 
 
 ####################################

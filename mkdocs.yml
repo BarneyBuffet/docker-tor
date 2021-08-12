@@ -8,5 +8,6 @@ nav:
     - Control: control.md
     - Hidden Service: service.md
     - Relay: relay.md
+    - Nyx: nyx.md
     - Build: build.md
     - Kubernetes: kubernetes.md

@@ -4,6 +4,7 @@ This repository is for a Tor daemon multiarch docker image.
 
 Full documentation for this Docker image can be found at [https://barneybuffet.github.io/docker-tor/](https://barneybuffet.github.io/docker-tor/)
 
+Tor can't help you if you use it wrong! Learn how to be safe at https://www.torproject.org/download/download#warning
 ## What is Tor
 
 [The Tor Project](https://www.torproject.org/) is a nonprofit organization primarily responsible for maintaining software for the Tor anonymity network. The Tor browser is the most well known piece of software maintained. The Tor Browser uses the onion network to anonymize browsing and the onion network relies on tor relays to achieve this.
