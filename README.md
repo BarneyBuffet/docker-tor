@@ -72,5 +72,6 @@ services:
 
 * [Docker Tor - Git Repository](https://github.com/BarneyBuffet/docker-tor)
 * [Docker Tor - Documentation](https://barneybuffet.github.io/docker-tor/)
+* [Tor Stackexchange](https://tor.stackexchange.com/)
 
 ### Start Visual Studio code with Tor Proxy

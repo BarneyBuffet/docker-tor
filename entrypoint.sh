@@ -2,8 +2,8 @@
 set -eo pipefail
 
 # Set config file variable
-TOR_CONFIG_FILE=/tor/torrc
-SERVICE_DIR=/tor/hidden_services
+TOR_CONFIG_FILE=${DATA_DIR}/torrc
+SERVICE_DIR=${DATA_DIR}/hidden_services
 
 ##############################################################################
 ## Display TOR torrc config in log
@@ -15,14 +15,19 @@ echo_config(){
 }
 
 ##############################################################################
-## Config tor as a Socks5 proxy
+## Config Tor as a Socks5 proxy
 ##############################################################################
 proxy_config(){
 
   ## Torrc default has proxy set to '0' so we need to have a default setting
   if [[ -n "${TOR_PROXY_PORT}" ]]; then
-    sed -i "/SocksPort.*/c\SocksPort ${TOR_PROXY_PORT}" $TOR_CONFIG_FILE
+    sed -i "/SocksPort 0/c\SocksPort ${TOR_PROXY_PORT}" $TOR_CONFIG_FILE
     echo "Updated proxy binding and port..."
+  fi
+
+  if $TOR_PROXY_SOCKET; then
+    sed -i "/# SocksPort unix:.*/c\SocksPort unix:/tor/socks5.socket GroupWritable RelaxDirModeCheck" $TOR_CONFIG_FILE
+    echo "Updated proxy socket..."
   fi
 
   ## IP or IP ranges accepted by the proxy. Everything else is rejected
@@ -32,35 +37,42 @@ proxy_config(){
   fi
 }
 
+##############################################################################
+## Config Tor Control
+##############################################################################
 control_config(){
-  ## If we have a password hash it and set
-  if [[ -n "${TOR_CONTROL_PASSWORD}" ]]; then
+
+  ## If we have a control port variable set it
+  if [[ -n "${TOR_CONTROL_PORT}" ]]; then
     sed -i "/# ControlPort.*/c\ControlPort ${TOR_CONTROL_PORT}" $TOR_CONFIG_FILE
-    HASHED_PASSWORD=$(tor --hash-password $TOR_CONTROL_PASSWORD)
-    sed -i "/# HashedControlPassword.*/c\HashedControlPassword $HASHED_PASSWORD" $TOR_CONFIG_FILE
-    echo "Opened control port to ${TOR_CONTROL_PORT} with a password..."
+    echo "Control port set to ${TOR_CONTROL_PORT} ..."
   fi
 
-  ## Cookie function because it is used twice below
-  control_cookie_config(){
-    ## Set control port in config
-    sed -i "/# ControlPort.*/c\ControlPort ${TOR_CONTROL_PORT}" $TOR_CONFIG_FILE
-    ## Set control cookie true in config
-    sed -i "/# CookieAuthentication 1/c\CookieAuthentication 1" $TOR_CONFIG_FILE
-    ## Symbolic link torr to default location for nyx
-    mkdir -p /home/tor/.tor
-    ln -s /tor/control_auth_cookie /home/tor/.tor/control_auth_cookie
-    echo "Opened control port to ${TOR_CONTROL_PORT} with an authorisation cookie..."
-  }
+  ## Set control socket if set true
+  if $TOR_CONTROL_SOCKET; then
+    sed -i "/# ControlSocket unix:.*/c\ControlSocket unix:/tor/control.socket GroupWritable RelaxDirModeCheck" $TOR_CONFIG_FILE
+    echo "Control socket set ..."
+  fi
+
+  ## If we have a password hash it and set
+  if [[ -n "${TOR_CONTROL_PASSWORD}" ]]; then
+    HASHED_PASSWORD=$(tor --hash-password $TOR_CONTROL_PASSWORD)
+    sed -i "/# HashedControlPassword.*/c\HashedControlPassword $HASHED_PASSWORD" $TOR_CONFIG_FILE
+    echo "Opened control with password ..."
+  fi
 
   ## If cookie is true then set 1
   if $TOR_CONTROL_COOKIE; then
-    control_cookie_config
+    ## Set control cookie true in config
+    sed -i "/# CookieAuthentication.*/c\CookieAuthentication 1" $TOR_CONFIG_FILE
+    echo "Opened control with authentication true ..."
   fi
 
-  ## If we don't have a password and no cookie flag, set cookie
-  if [[ -z "${TOR_CONTROL_PASSWORD}" ]] && [[ -z "${TOR_CONTROL_COOKIE}" ]]; then
-    control_cookie_config
+  ## If we don't have a password and no cookie flag, set cookie by default
+  if [[ -z "${TOR_CONTROL_PASSWORD}" ]] && [[ ! $TOR_CONTROL_COOKIE ]]; then
+    ## Set control cookie true in config
+    sed -i "/# CookieAuthentication.*/c\CookieAuthentication 1" $TOR_CONFIG_FILE
+    echo "Password or cookie not set. Defaulting to control with cookie authentication ..."
   fi
 }
 
@@ -144,7 +156,8 @@ init(){
   echo -e "\\n====================================- INITIALISING TOR -===================================="
 
   ## Copy torrc config file into bind-volume
-  cp /tmp/tor/torrc* /tor/
+  cp /tmp/tor/torrc* ${DATA_DIR}
+  cp /tmp/tor/tor-man-page.txt ${DATA_DIR}
   ## Remove temporary files
   rm -rf /tmp/tor
   echo "Copied torrc into /tor..."
@@ -193,6 +206,13 @@ main() {
     echo "Only run init once. Delete this file to re-init torrc on container start up." > $TOR_CONFIG_FILE.lock
   else
     echo "Torrc already configured. Skipping config templating..."
+  fi
+
+  ## If we have a cookie, symbolic link to default for nyx
+  if [[ ! -e /tor/control_auth_cookie  ]]; then 
+    mkdir -p /home/tor/.tor
+    ln -s /tor/control_auth_cookie /home/tor/.tor/control_auth_cookie
+    echo "Symbolic link authorisation cookie..."
   fi
 
   ## Echo config to log if set true
