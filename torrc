@@ -16,7 +16,7 @@ Log [handshake]notice [*]notice stderr
 
 ## Disable Socks5 proxy by default
 SocksPort 0
-# SocksPort unix:/tor/socks.socket GroupWritable RelaxDirModeCheck
+# SocksPort unix:/tor/socks.socket WorldWritable RelaxDirModeCheck
 
 ## Accept localhost and RFC1918 networks, reject all others
 SocksPolicy accept 127.0.0.1,accept 10.0.0.0/8,accept 172.16.0.0/12,accept 192.168.0.0/16
@@ -26,7 +26,7 @@ SocksPolicy reject *
 ## controller applications, as documented in control-spec.txt.
 ## https://gitweb.torproject.org/torspec.git/tree/control-spec.txt
 # ControlPort 9051
-# ControlSocket unix:/tor/control.socket GroupWritable RelaxDirModeCheck
+# ControlSocket unix:/tor/control.socket WorldWritable RelaxDirModeCheck
 
 ## If you enable the controlport, be sure to enable one of these
 ## authentication methods, to prevent attackers from accessing it.

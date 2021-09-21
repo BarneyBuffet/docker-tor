@@ -54,7 +54,7 @@ ENV DATA_DIR=/tor
 ENV USER=nonroot
 ENV GROUP=$USER
 ENV PUID=10000
-ENV PGID=1000
+ENV PGID=10001
 ## Non-root user for security purposes.
 RUN addgroup --gid ${PGID} --system ${GROUP} && \
     adduser --uid ${PUID} --system --ingroup ${GROUP} --home /home/${USER} ${USER}
@@ -74,7 +74,7 @@ RUN apk --no-cache add --update \
     && pip install nyx
 
 ## Create tor directories
-RUN mkdir -p ${DATA_DIR} && chown -R ${USER}:${GROUP} ${DATA_DIR}  && chmod -R 700 ${DATA_DIR}
+RUN mkdir -p ${DATA_DIR} && chown -R ${USER}:${GROUP} ${DATA_DIR} && chmod -R 700 ${DATA_DIR}
 
 ## Copy compiled Tor daemon from tor-builder
 COPY --from=tor-builder /usr/local/ /usr/local/
@@ -99,7 +99,8 @@ HEALTHCHECK --interval=60s --timeout=15s --start-period=20s \
 
 ## ENV VARIABLES
 ## Default values
-ENV TOR_LOG_CONFIG="false" \
+ENV TOR_CONFIG_OVERWRITE="false" \
+    TOR_LOG_CONFIG="false" \
     TOR_PROXY="true" \
     TOR_PROXY_PORT="9050" \
     TOR_PROXY_SOCKET="false" \

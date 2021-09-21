@@ -26,7 +26,8 @@ proxy_config(){
   fi
 
   if $TOR_PROXY_SOCKET; then
-    sed -i "/# SocksPort unix:.*/c\SocksPort unix:/tor/socks5.socket GroupWritable RelaxDirModeCheck" $TOR_CONFIG_FILE
+    ## Needs to be WorldWritable for bind mounts
+    sed -i "/# SocksPort unix:.*/c\SocksPort unix:/tor/socks5.socket WorldWritable RelaxDirModeCheck" $TOR_CONFIG_FILE
     echo "Updated proxy socket..."
   fi
 
@@ -50,7 +51,8 @@ control_config(){
 
   ## Set control socket if set true
   if $TOR_CONTROL_SOCKET; then
-    sed -i "/# ControlSocket unix:.*/c\ControlSocket unix:/tor/control.socket GroupWritable RelaxDirModeCheck" $TOR_CONFIG_FILE
+    ## Needs to be WorldWritable for bind mounts
+    sed -i "/# ControlSocket unix:.*/c\ControlSocket unix:/tor/control.socket WorldWritable RelaxDirModeCheck" $TOR_CONFIG_FILE
     echo "Control socket set ..."
   fi
 
@@ -148,6 +150,16 @@ hidden_services_config(){
 
 }
 
+##############################################################################
+## Copy config files from tmp into bind volume
+##############################################################################
+copy_files(){
+  ## Copy torrc config file into bind-volume
+  cp /tmp/tor/torrc* ${DATA_DIR}
+  cp /tmp/tor/tor-man-page.txt ${DATA_DIR}
+  ## We are not deleting because we need the config if we are overwriting
+  echo "Copied torrc into /tor..."
+}
 
 ##############################################################################
 ## Initialise docker image
@@ -155,12 +167,7 @@ hidden_services_config(){
 init(){
   echo -e "\\n====================================- INITIALISING TOR -===================================="
 
-  ## Copy torrc config file into bind-volume
-  cp /tmp/tor/torrc* ${DATA_DIR}
-  cp /tmp/tor/tor-man-page.txt ${DATA_DIR}
-  ## Remove temporary files
-  rm -rf /tmp/tor
-  echo "Copied torrc into /tor..."
+  copy_files
 
   ## Are we setting up a Tor proxy
   if $TOR_PROXY; then
@@ -196,12 +203,12 @@ init(){
 }
 
 ##############################################################################
-## Main shell script function
+## Main function
 ##############################################################################
 main() {
 
-  ## Initialise container if there is no lock file
-  if [[ ! -e $TOR_CONFIG_FILE.lock ]]; then 
+  ## Initialise container if there is no lock file or we are overwriting
+  if [[ ! -e $TOR_CONFIG_FILE.lock ]] || $TOR_CONFIG_OVERWRITE; then 
     init
     echo "Only run init once. Delete this file to re-init torrc on container start up." > $TOR_CONFIG_FILE.lock
   else
@@ -209,7 +216,8 @@ main() {
   fi
 
   ## If we have a cookie, symbolic link to default for nyx
-  if [[ ! -e /tor/control_auth_cookie  ]]; then 
+  ## TODO: nyx should be its own container
+  if [[ ! -f /tor/control_auth_cookie  ]] && [[ -f /home/tor/.tor/control_auth_cookie  ]]; then 
     mkdir -p /home/tor/.tor
     ln -s /tor/control_auth_cookie /home/tor/.tor/control_auth_cookie
     echo "Symbolic link authorisation cookie..."
