@@ -15,6 +15,39 @@ echo_config(){
 }
 
 ##############################################################################
+## Map container runtime PUID & PGID
+##############################################################################
+map_user(){
+  ## https://github.com/magenta-aps/docker_user_mapping/blob/master/user-mapping.sh
+  ## https://github.com/linuxserver/docker-baseimage-alpine/blob/3eb7146a55b7bff547905e0d3f71a26036448ae6/root/etc/cont-init.d/10-adduser
+  ## https://github.com/haugene/docker-transmission-openvpn/blob/master/transmission/userSetup.sh
+
+  ## Set puid & pgid to run container, fallback to defaults
+  PUID=${PUID:-1000}
+  PGID=${PGID:-1001}
+
+  ## If uid or gid is different to existing modify nonroot user to suit
+  if [ ! "$(id -u nonroot)" -eq "$PUID" ]; then usermod -o -u "$PUID" nonroot ; fi
+  if [ ! "$(id -g nonroot)" -eq "$PGID" ]; then groupmod -o -g "$PGID" nonroot ; fi
+  echo "Tor set to run as nonroot with uid:$(id -u nonroot) & gid:$(id -g nonroot)"
+
+  ## Make sure volumes directories match nonroot
+  chown -R nonroot:nonroot \
+    ${DATA_DIR}
+  echo "Enforced ownership of ${DATA_DIR} to nonroot:nonroot"
+  
+  ## Make sure volume permissions are correct
+  chmod -R go=rX,u=rwX \
+    ${DATA_DIR}
+  echo "Enforced permissions for ${DATA_DIR} to go=rX & u=rwX"
+
+  ## Export to the rest of the bash script
+  export PUID
+  export PGID
+
+}
+
+##############################################################################
 ## Config Tor as a Socks5 proxy
 ##############################################################################
 proxy_config(){
@@ -162,6 +195,19 @@ copy_files(){
 }
 
 ##############################################################################
+## Link config to default location
+##############################################################################
+link_config(){
+  ## If we have a cookie, symbolic link to default for nyx
+  ## TODO: nyx should be its own container
+  if [[ ! -f /tor/control_auth_cookie  ]] && [[ -f /home/tor/.tor/control_auth_cookie  ]]; then 
+    mkdir -p /home/tor/.tor
+    ln -s /tor/control_auth_cookie /home/tor/.tor/control_auth_cookie
+    echo "Symbolic link authorisation cookie..."
+  fi
+}
+
+##############################################################################
 ## Initialise docker image
 ##############################################################################
 init(){
@@ -215,13 +261,8 @@ main() {
     echo "Torrc already configured. Skipping config templating..."
   fi
 
-  ## If we have a cookie, symbolic link to default for nyx
-  ## TODO: nyx should be its own container
-  if [[ ! -f /tor/control_auth_cookie  ]] && [[ -f /home/tor/.tor/control_auth_cookie  ]]; then 
-    mkdir -p /home/tor/.tor
-    ln -s /tor/control_auth_cookie /home/tor/.tor/control_auth_cookie
-    echo "Symbolic link authorisation cookie..."
-  fi
+  map_user
+  link_config
 
   ## Echo config to log if set true
   if $TOR_LOG_CONFIG; then
@@ -237,5 +278,5 @@ echo -e "\\n====================================- STARTING TOR -================
 tor --version
 echo ''
 
-## Execute Docker file CMD
-exec "$@"
+## Execute dockerfile CMD as nonroot alternate gosu
+su-exec "${PUID}:${PGID}" "$@"

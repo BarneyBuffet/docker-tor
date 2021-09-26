@@ -45,19 +45,11 @@ RUN tar xfz tor-$TOR_VER.tar.gz &&\
 ########################################################################################
 ## STAGE TWO - RUNNING IMAGE
 ########################################################################################
-FROM alpine:$ALPINE_VER
+FROM alpine:$ALPINE_VER as release
 
-## Bitcoind data directory
-ENV DATA_DIR=/tor
-
-## Don't use root
-ENV USER=nonroot
-ENV GROUP=$USER
-ENV PUID=10000
-ENV PGID=10001
-## Non-root user for security purposes.
-RUN addgroup --gid ${PGID} --system ${GROUP} && \
-    adduser --uid ${PUID} --system --ingroup ${GROUP} --home /home/${USER} ${USER}
+## CREATE NON-ROOT USER FOR SECURITY
+RUN addgroup --gid 1001 --system nonroot && \
+    adduser  --uid 1000 --system --ingroup nonroot --home /home/nonroot nonroot
 
 ## Install Alpine packages
 ## bind-tools is needed for DNS resolution to work in *some* Docker networks
@@ -66,31 +58,33 @@ RUN apk --no-cache add --update \
     bash \
     curl \
     libevent \
-    tini \
-    bind-tools \
+    tini bind-tools su-exec \
     openssl \
     coreutils \
     python3 py3-pip \
     && pip install nyx
 
+## Bitcoind data directory
+ENV DATA_DIR=/tor
+
 ## Create tor directories
-RUN mkdir -p ${DATA_DIR} && chown -R ${USER}:${GROUP} ${DATA_DIR} && chmod -R 700 ${DATA_DIR}
+RUN mkdir -p ${DATA_DIR} && chown -R nonroot:nonroot ${DATA_DIR} && chmod -R go+rX,u+rwX ${DATA_DIR}
 
 ## Copy compiled Tor daemon from tor-builder
 COPY --from=tor-builder /usr/local/ /usr/local/
 
 ## Copy entrypoint shell script for templating torrc
-COPY --chown=${USER}:${GROUP} --chmod=-g+rwX entrypoint.sh /usr/local/bin
+COPY --chown=nonroot:nonroot --chmod=go+rX,u+rwX entrypoint.sh /usr/local/bin
 
 ## Copy client authentication for private/public keys
-COPY --chown=${USER}:${GROUP} --chmod=g+rwX client_auth.sh /usr/local/bin
+COPY --chown=nonroot:nonroot --chmod=go+rX,u+rwX client_auth.sh /usr/local/bin
 
 ## Copy torrc config and examples to tmp tor. Entrypoint will copy across to bind-volume
-COPY --chown=${USER}:${GROUP} ./torrc* /tmp/tor/
-COPY --chown=${USER}:${GROUP} ./tor-man-page.txt /tmp/tor/tor-man-page.txt
+COPY --chown=nonroot:nonroot ./torrc* /tmp/tor/
+COPY --chown=nonroot:nonroot ./tor-man-page.txt /tmp/tor/tor-man-page.txt
 
 ## Copy nyxrc config into default location
-COPY --chown=${USER}:${GROUP} --chmod=g+rwX ./nyxrc /home/tor/.nyx/config
+COPY --chown=nonroot:nonroot --chmod=go+rX,u+rwX ./nyxrc /home/tor/.nyx/config
 
 ## Docker health check
 HEALTHCHECK --interval=60s --timeout=15s --start-period=20s \
@@ -99,7 +93,9 @@ HEALTHCHECK --interval=60s --timeout=15s --start-period=20s \
 
 ## ENV VARIABLES
 ## Default values
-ENV TOR_CONFIG_OVERWRITE="false" \
+ENV PUID= \
+    PGID= \
+    TOR_CONFIG_OVERWRITE="false" \
     TOR_LOG_CONFIG="false" \
     TOR_PROXY="true" \
     TOR_PROXY_PORT="9050" \
@@ -124,7 +120,7 @@ LABEL license="GNU"
 LABEL url="https://www.torproject.org"
 LABEL vcs-url="https://github.com/BarneyBuffet"  
 
-USER ${USER}:${GROUP}
+VOLUME [ "${DATA_DIR}" ]
 WORKDIR ${DATA_DIR}
 EXPOSE 9050/tcp 9051/tcp
 ENTRYPOINT ["/sbin/tini", "--", "entrypoint.sh"]
