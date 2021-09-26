@@ -130,11 +130,11 @@ fi
 
 ## CREATE FOLDERS IF THEY DON'T EXIST
 if [ ! -d ${auth_dir} ]; then
-  mkdir -p ${auth_dir} && chown -R tor:tor ${auth_dir}  && chmod 700 ${auth_dir} && chmod 700 ${dir} && chmod 700 ${dir}/${service}
+  mkdir -p ${auth_dir} && chown -R nonroot:nonroot ${auth_dir} && chmod go+rX,u+rwX ${auth_dir} && chmod go+rX,u+rwX ${dir} && chmod go+rX,u+rwX ${dir}/${service}
 fi
 
 if [ ! -d ${auth_private_dir} ]; then
-  mkdir -p ${auth_private_dir} && chown -R tor:tor ${auth_dir}  && chmod 700 ${auth_private_dir}
+  mkdir -p ${auth_private_dir} && chown -R nonroot:nonroot ${auth_dir}  && chmod go+rX,u+rwX ${auth_private_dir}
 fi
 
 ## CREATE PUBLIC/PRIVATE KEY FILES

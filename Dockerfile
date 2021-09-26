@@ -59,8 +59,7 @@ RUN apk --no-cache add --update \
     curl \
     libevent \
     tini bind-tools su-exec \
-    openssl \
-    coreutils \
+    openssl shadow coreutils \
     python3 py3-pip \
     && pip install nyx
 

@@ -1,0 +1,29 @@
+version: "3.9"
+
+services:
+  tor:
+    image: tor:dev
+    volumes:
+      - ~/Documents/docker/tor_test:/tor
+    restart:  "no"
+    # ports:
+    #   - "99050:99050"
+    #   - "99051:99051"
+    environment:
+      PUID: "20000"
+      PGID: "20001"
+      TOR_CONFIG_OVERWRITE: "true"
+      TOR_LOG_CONFIG: "true"
+      TOR_PROXYL: "true"
+      TOR_PROXY_PORT: "9150"
+      TOR_PROXY_SOCKET: "true"
+      TOR_PROXY_ACCEPT: "accept 127.0.0.1,accept 10.0.0.0/8,accept 172.16.0.0/12,accept 192.168.0.0/16,accept 192.168.0.445"
+      TOR_CONTROL: "true"
+      TOR_CONTROL_PORT: "99051"
+      TOR_CONTROL_SOCKET: "true"
+      TOR_CONTROL_PASSWORD: "test-password!"
+      TOR_CONTROL_COOKIE: "true"
+      TOR_SERVICE: "true"
+      TOR_SERVICE_HOSTS: "nextcloud=80:192.168.0.3:80"
+      TOR_SERVICE_HOSTS_CLIENTS: "nextcloud=alice,bob"
+      TOR_RELAY: "false"

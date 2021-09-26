@@ -14,6 +14,6 @@ services:
       TOR_PROXY_CONTROL_COOKIE: 'true'
     volumes:
       - tor:/tor/
-      ports:
+    ports:
       - "9050:9050/tcp"
     restart: unless-stopped

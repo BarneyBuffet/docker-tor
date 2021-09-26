@@ -91,7 +91,7 @@ control_config(){
 
   ## If we have a password hash it and set
   if [[ -n "${TOR_CONTROL_PASSWORD}" ]]; then
-    HASHED_PASSWORD=$(tor --hash-password $TOR_CONTROL_PASSWORD)
+    HASHED_PASSWORD=$(su-exec "${PUID}:${PGID}" tor --hash-password $TOR_CONTROL_PASSWORD)
     sed -i "/# HashedControlPassword.*/c\HashedControlPassword $HASHED_PASSWORD" $TOR_CONFIG_FILE
     echo "Opened control with password ..."
   fi
@@ -146,7 +146,7 @@ hidden_services_config(){
   hosts=(${TOR_SERVICE_HOSTS// / })
 
   ## Create hidden_services directory and set permission
-  mkdir -p /tor/hidden_services && chown -R tor:tor /tor/hidden_services  && chmod 777 /tor/hidden_services
+  mkdir -p /tor/hidden_services && chown -R nonroot:nonroot/tor/hidden_services  && chmod 777 /tor/hidden_services
 
   ## Parse through each host
   for host in ${hosts[@]}; do
