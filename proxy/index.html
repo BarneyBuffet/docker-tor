@@ -1,0 +1,623 @@
+
+<!doctype html>
+<html lang="en" class="no-js">
+  <head>
+    
+      <meta charset="utf-8">
+      <meta name="viewport" content="width=device-width,initial-scale=1">
+      
+      
+      
+      
+        <link rel="canonical" href="https://BarneyBuffet.github.io/docker-tor/proxy/">
+      
+      <link rel="icon" href="../assets/images/favicon.png">
+      <meta name="generator" content="mkdocs-1.2.2, mkdocs-material-7.3.0">
+    
+    
+      
+        <title>Proxy - Docker Tor</title>
+      
+    
+    
+      <link rel="stylesheet" href="../assets/stylesheets/main.8b42a75e.min.css">
+      
+        
+        <link rel="stylesheet" href="../assets/stylesheets/palette.3f5d1f46.min.css">
+        
+      
+    
+    
+    
+      
+        
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+        <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto:300,400,400i,700%7CRoboto+Mono&display=fallback">
+        <style>:root{--md-text-font-family:"Roboto";--md-code-font-family:"Roboto Mono"}</style>
+      
+    
+    
+    
+    
+      
+
+
+    
+    
+  </head>
+  
+  
+    
+    
+    
+    
+    
+    <body dir="ltr" data-md-color-scheme="" data-md-color-primary="none" data-md-color-accent="none">
+  
+    
+    <script>function __prefix(e){return new URL("..",location).pathname+"."+e}function __get(e,t=localStorage){return JSON.parse(t.getItem(__prefix(e)))}</script>
+    
+    <input class="md-toggle" data-md-toggle="drawer" type="checkbox" id="__drawer" autocomplete="off">
+    <input class="md-toggle" data-md-toggle="search" type="checkbox" id="__search" autocomplete="off">
+    <label class="md-overlay" for="__drawer"></label>
+    <div data-md-component="skip">
+      
+        
+        <a href="#tor-proxy" class="md-skip">
+          Skip to content
+        </a>
+      
+    </div>
+    <div data-md-component="announce">
+      
+    </div>
+    
+      
+
+<header class="md-header" data-md-component="header">
+  <nav class="md-header__inner md-grid" aria-label="Header">
+    <a href=".." title="Docker Tor" class="md-header__button md-logo" aria-label="Docker Tor" data-md-component="logo">
+      
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a3 3 0 0 0 3-3 3 3 0 0 0-3-3 3 3 0 0 0-3 3 3 3 0 0 0 3 3m0 3.54C9.64 9.35 6.5 8 3 8v11c3.5 0 6.64 1.35 9 3.54 2.36-2.19 5.5-3.54 9-3.54V8c-3.5 0-6.64 1.35-9 3.54z"/></svg>
+
+    </a>
+    <label class="md-header__button md-icon" for="__drawer">
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M3 6h18v2H3V6m0 5h18v2H3v-2m0 5h18v2H3v-2z"/></svg>
+    </label>
+    <div class="md-header__title" data-md-component="header-title">
+      <div class="md-header__ellipsis">
+        <div class="md-header__topic">
+          <span class="md-ellipsis">
+            Docker Tor
+          </span>
+        </div>
+        <div class="md-header__topic" data-md-component="header-topic">
+          <span class="md-ellipsis">
+            
+              Proxy
+            
+          </span>
+        </div>
+      </div>
+    </div>
+    
+    
+    
+      <label class="md-header__button md-icon" for="__search">
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.516 6.516 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5z"/></svg>
+      </label>
+      
+<div class="md-search" data-md-component="search" role="dialog">
+  <label class="md-search__overlay" for="__search"></label>
+  <div class="md-search__inner" role="search">
+    <form class="md-search__form" name="search">
+      <input type="text" class="md-search__input" name="query" aria-label="Search" placeholder="Search" autocapitalize="off" autocorrect="off" autocomplete="off" spellcheck="false" data-md-component="search-query" required>
+      <label class="md-search__icon md-icon" for="__search">
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.516 6.516 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5z"/></svg>
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20 11v2H8l5.5 5.5-1.42 1.42L4.16 12l7.92-7.92L13.5 5.5 8 11h12z"/></svg>
+      </label>
+      <nav class="md-search__options" aria-label="Search">
+        
+        <button type="reset" class="md-search__icon md-icon" aria-label="Clear" tabindex="-1">
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M19 6.41 17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12 19 6.41z"/></svg>
+        </button>
+      </nav>
+      
+    </form>
+    <div class="md-search__output">
+      <div class="md-search__scrollwrap" data-md-scrollfix>
+        <div class="md-search-result" data-md-component="search-result">
+          <div class="md-search-result__meta">
+            Initializing search
+          </div>
+          <ol class="md-search-result__list"></ol>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+    
+    
+  </nav>
+  
+</header>
+    
+    <div class="md-container" data-md-component="container">
+      
+      
+        
+          
+        
+      
+      <main class="md-main" data-md-component="main">
+        <div class="md-main__inner md-grid">
+          
+            
+              
+              <div class="md-sidebar md-sidebar--primary" data-md-component="sidebar" data-md-type="navigation" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+
+<nav class="md-nav md-nav--primary" aria-label="Navigation" data-md-level="0">
+  <label class="md-nav__title" for="__drawer">
+    <a href=".." title="Docker Tor" class="md-nav__button md-logo" aria-label="Docker Tor" data-md-component="logo">
+      
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a3 3 0 0 0 3-3 3 3 0 0 0-3-3 3 3 0 0 0-3 3 3 3 0 0 0 3 3m0 3.54C9.64 9.35 6.5 8 3 8v11c3.5 0 6.64 1.35 9 3.54 2.36-2.19 5.5-3.54 9-3.54V8c-3.5 0-6.64 1.35-9 3.54z"/></svg>
+
+    </a>
+    Docker Tor
+  </label>
+  
+  <ul class="md-nav__list" data-md-scrollfix>
+    
+      
+      
+      
+
+  
+  
+  
+    <li class="md-nav__item">
+      <a href=".." class="md-nav__link">
+        Home
+      </a>
+    </li>
+  
+
+    
+      
+      
+      
+
+  
+  
+    
+  
+  
+    <li class="md-nav__item md-nav__item--active">
+      
+      <input class="md-nav__toggle md-toggle" data-md-toggle="toc" type="checkbox" id="__toc">
+      
+      
+        
+      
+      
+        <label class="md-nav__link md-nav__link--active" for="__toc">
+          Proxy
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <a href="./" class="md-nav__link md-nav__link--active">
+        Proxy
+      </a>
+      
+        
+<nav class="md-nav md-nav--secondary" aria-label="Table of contents">
+  
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Table of contents
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#what-is-a-proxy" class="md-nav__link">
+    What is a proxy
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#start-a-tor-proxy" class="md-nav__link">
+    Start a Tor Proxy
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#tor-proxy-options" class="md-nav__link">
+    Tor Proxy Options
+  </a>
+  
+    <nav class="md-nav" aria-label="Tor Proxy Options">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#binding-and-port" class="md-nav__link">
+    Binding and Port
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#accept-policy" class="md-nav__link">
+    Accept Policy
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#test-tor-is-working" class="md-nav__link">
+    Test Tor is working
+  </a>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+      
+    </li>
+  
+
+    
+      
+      
+      
+
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../control/" class="md-nav__link">
+        Control
+      </a>
+    </li>
+  
+
+    
+      
+      
+      
+
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../service/" class="md-nav__link">
+        Hidden Service
+      </a>
+    </li>
+  
+
+    
+      
+      
+      
+
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../relay/" class="md-nav__link">
+        Relay
+      </a>
+    </li>
+  
+
+    
+      
+      
+      
+
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../nyx/" class="md-nav__link">
+        Nyx
+      </a>
+    </li>
+  
+
+    
+      
+      
+      
+
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../build/" class="md-nav__link">
+        Build
+      </a>
+    </li>
+  
+
+    
+      
+      
+      
+
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../kubernetes/" class="md-nav__link">
+        Kubernetes
+      </a>
+    </li>
+  
+
+    
+  </ul>
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+            
+              
+              <div class="md-sidebar md-sidebar--secondary" data-md-component="sidebar" data-md-type="toc" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+<nav class="md-nav md-nav--secondary" aria-label="Table of contents">
+  
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Table of contents
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#what-is-a-proxy" class="md-nav__link">
+    What is a proxy
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#start-a-tor-proxy" class="md-nav__link">
+    Start a Tor Proxy
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#tor-proxy-options" class="md-nav__link">
+    Tor Proxy Options
+  </a>
+  
+    <nav class="md-nav" aria-label="Tor Proxy Options">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#binding-and-port" class="md-nav__link">
+    Binding and Port
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#accept-policy" class="md-nav__link">
+    Accept Policy
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#test-tor-is-working" class="md-nav__link">
+    Test Tor is working
+  </a>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+          
+          <div class="md-content" data-md-component="content">
+            <article class="md-content__inner md-typeset">
+              
+                
+                
+                <h1 id="tor-proxy">Tor Proxy</h1>
+<h2 id="what-is-a-proxy">What is a proxy</h2>
+<p>A <a href="https://en.wikipedia.org/wiki/Proxy_server">proxy</a> server acts as an intermediary between clients (you) and servers that provide websites and services. A proxy server thus functions on behalf of the client when requesting services, potentially masking the true origin of the request to the resource server.</p>
+<p>Tor core implements a Socks5 proxy. SOCKS5 is the most recently optimized version of Socket secure (or <a href="https://en.wikipedia.org/wiki/SOCKS">SOCKS</a>) proxy.</p>
+<p>By default this docker image will configure and run a Tor Socks5 proxy. The proxy can be disabled by setting <code>-e TOR_PROXY=false</code> when running the docker image.</p>
+<h2 id="start-a-tor-proxy">Start a Tor Proxy</h2>
+<p>To start a Tor proxy instance with this image run the following docker command:</p>
+<pre><code class="language-bash">docker run -d --name tor -p 9050:9050/tcp barneybuffet/tor:latest
+</code></pre>
+<p>By default the image will:</p>
+<ul>
+<li>Set socks5 proxy port to <code>9050</code></li>
+<li>Set socks5 proxy port binding to all ip address. i.e. <code>0.0.0.0</code></li>
+<li>Restrict socks5 proxy access to <a href="https://datatracker.ietf.org/doc/html/rfc1918#section-3">RFC1918</a> local addresses, and reject all others ip address</li>
+</ul>
+<p>These defaults can be configured via docker environmental variables (options) discussed below.</p>
+<h2 id="tor-proxy-options">Tor Proxy Options</h2>
+<p>The following environmental (configuration) options are available when configuring the Socks5 proxy:</p>
+<h3 id="binding-and-port">Binding and Port</h3>
+<p>This image configures by default a proxy binding of all ips through <code>0.0.0.0</code> and a port of <code>9050</code> (the tor default port). Access to the proxy is restricted to RFC1918](https://datatracker.ietf.org/doc/html/rfc1918#section-3) local network IP addresses through accept policies discussed below. The socks5 binding and port will be set to <code>SocksPort 0</code> if <code>TOR_PROXY=false</code>, disabling the tor proxy client.</p>
+<p>Default configuration:</p>
+<pre><code class="language-bash">SocksPort 0.0.0.0:9050
+</code></pre>
+<p>The binding and port can be configure using <code>TOR_PROXY_PORT=&lt;address&gt;:&lt;port&gt;</code> with <code>TOR_PROXY=true</code>.</p>
+<p>The below env options will bind the proxy to localhost (i.e. 127.0.0.1) on port 9150. This might be useful when using docker-compose and networking services together.</p>
+<pre><code class="language-bash">docker run -d --name tor \
+  -e TOR_PROXY=true \
+  -e TOR_PROXY_PORT=localhost:9150 \
+  -p 9150:9150/tcp \
+  barneybuffet/tor:latest
+</code></pre>
+<p>Bind to ip 192.168.0.1 on port 9100:</p>
+<pre><code class="language-bash">docker run -d --name tor \
+  -e TOR_PROXY=true \
+  -e TOR_PROXY_PORT=192.168.0.1:9100 \
+  -p 9100:9100/tcp \
+  barneybuffet/tor:latest
+</code></pre>
+<h3 id="accept-policy">Accept Policy</h3>
+<p>Tor will allow/deny SOCKS requests based on IP address. By default this image will accept the localhost and all connections from <a href="https://datatracker.ietf.org/doc/html/rfc1918#section-3">RFC1918</a> local network IP addresses. All other IP address will be rejected.</p>
+<p>The <code>SocksPolicy reject *</code> is not configurable by this docker image environmental flags.</p>
+<p>Default configuration:</p>
+<pre><code class="language-bash">## Accept localhost and RFC1918 networks, reject all others
+SocksPolicy accept 127.0.0.1,accept 10.0.0.0/8,accept 172.16.0.0/12,accept 192.168.0.0/16
+SocksPolicy reject *
+</code></pre>
+<p>The accept socks policy can be configure using <code>TOR_PROXY_ACCEPT=accept &lt;ip or IP Subnet&gt;,accept &lt;ip or IP Subnet&gt;,...</code> with <code>TOR_PROXY=true</code>.</p>
+<p>Allow only 192.168.0.11 to use the proxy:</p>
+<pre><code class="language-bash">docker run -d --name tor \
+  -e TOR_PROXY=true \
+  -e TOR_PROXY_ACCEPT='accept 192.168.0.11' \
+  -p 9050:9050/tcp \
+  barneybuffet/tor:latest
+</code></pre>
+<p>Will configure to</p>
+<pre><code class="language-bash">## Accept localhost and RFC1918 networks, reject all others
+SocksPolicy accept 192.168.0.11
+SocksPolicy reject *
+</code></pre>
+<p>Allow only 192.168.1.0 <a href="http://www.steves-internet-guide.com/subnetting-subnet-masks-explained/">subnet</a> IPs to use the proxy:</p>
+<pre><code class="language-bash">docker run -d --name tor \
+  -e TOR_PROXY=true \
+  -e TOR_PROXY_ACCEPT=&quot;accept localhost,accept 192.168.1.0/24&quot; \
+  -p 9050:9050/tcp \
+  barneybuffet/tor:latest
+</code></pre>
+<p>Will configure to</p>
+<pre><code class="language-bash">## Accept localhost and RFC1918 networks, reject all others
+SocksPolicy accept localhost,accept 192.168.1.0/24 
+SocksPolicy reject *
+</code></pre>
+<h2 id="test-tor-is-working">Test Tor is working</h2>
+<p>Once the docker container is running the tor connection can be tested by opening a terminal within the container and using the below commands</p>
+<p>Check the container ip address against your internet ip address</p>
+<pre><code class="language-bash">curl --socks5 localhost:9050 --socks5-hostname localhost:9050 https://ipinfo.io/ip
+</code></pre>
+<p>Confirm connection to the Tor network</p>
+<pre><code class="language-bash">curl --socks5 localhost:9050 --socks5-hostname localhost:9050 -s https://check.torproject.org/ | cat | grep -m 1 Congratulations | xargs
+</code></pre>
+<p>The connection to the container can be check using the same commands.</p>
+                
+              
+              
+                
+
+
+              
+            </article>
+          </div>
+        </div>
+        
+      </main>
+      
+        
+<footer class="md-footer">
+  
+    <nav class="md-footer__inner md-grid" aria-label="Footer">
+      
+        
+        <a href=".." class="md-footer__link md-footer__link--prev" aria-label="Previous: Home" rel="prev">
+          <div class="md-footer__button md-icon">
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20 11v2H8l5.5 5.5-1.42 1.42L4.16 12l7.92-7.92L13.5 5.5 8 11h12z"/></svg>
+          </div>
+          <div class="md-footer__title">
+            <div class="md-ellipsis">
+              <span class="md-footer__direction">
+                Previous
+              </span>
+              Home
+            </div>
+          </div>
+        </a>
+      
+      
+        
+        <a href="../control/" class="md-footer__link md-footer__link--next" aria-label="Next: Control" rel="next">
+          <div class="md-footer__title">
+            <div class="md-ellipsis">
+              <span class="md-footer__direction">
+                Next
+              </span>
+              Control
+            </div>
+          </div>
+          <div class="md-footer__button md-icon">
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M4 11v2h12l-5.5 5.5 1.42 1.42L19.84 12l-7.92-7.92L10.5 5.5 16 11H4z"/></svg>
+          </div>
+        </a>
+      
+    </nav>
+  
+  <div class="md-footer-meta md-typeset">
+    <div class="md-footer-meta__inner md-grid">
+      <div class="md-footer-copyright">
+        
+        
+          Made with
+          <a href="https://squidfunk.github.io/mkdocs-material/" target="_blank" rel="noopener">
+            Material for MkDocs
+          </a>
+        
+        
+      </div>
+      
+    </div>
+  </div>
+</footer>
+      
+    </div>
+    <div class="md-dialog" data-md-component="dialog">
+      <div class="md-dialog__inner md-typeset"></div>
+    </div>
+    <script id="__config" type="application/json">{"base": "..", "features": [], "translations": {"clipboard.copy": "Copy to clipboard", "clipboard.copied": "Copied to clipboard", "search.config.lang": "en", "search.config.pipeline": "trimmer, stopWordFilter", "search.config.separator": "[\\s\\-]+", "search.placeholder": "Search", "search.result.placeholder": "Type to start searching", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.term.missing": "Missing", "select.version.title": "Select version"}, "search": "../assets/javascripts/workers/search.f8263e09.min.js", "version": null}</script>
+    
+    
+      <script src="../assets/javascripts/bundle.4fc53ad4.min.js"></script>
+      
+    
+  </body>
+</html>

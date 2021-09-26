@@ -1,0 +1,589 @@
+
+<!doctype html>
+<html lang="en" class="no-js">
+  <head>
+    
+      <meta charset="utf-8">
+      <meta name="viewport" content="width=device-width,initial-scale=1">
+      
+      
+      
+      
+        <link rel="canonical" href="https://BarneyBuffet.github.io/docker-tor/service/">
+      
+      <link rel="icon" href="../assets/images/favicon.png">
+      <meta name="generator" content="mkdocs-1.2.2, mkdocs-material-7.3.0">
+    
+    
+      
+        <title>Hidden Service - Docker Tor</title>
+      
+    
+    
+      <link rel="stylesheet" href="../assets/stylesheets/main.8b42a75e.min.css">
+      
+        
+        <link rel="stylesheet" href="../assets/stylesheets/palette.3f5d1f46.min.css">
+        
+      
+    
+    
+    
+      
+        
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+        <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto:300,400,400i,700%7CRoboto+Mono&display=fallback">
+        <style>:root{--md-text-font-family:"Roboto";--md-code-font-family:"Roboto Mono"}</style>
+      
+    
+    
+    
+    
+      
+
+
+    
+    
+  </head>
+  
+  
+    
+    
+    
+    
+    
+    <body dir="ltr" data-md-color-scheme="" data-md-color-primary="none" data-md-color-accent="none">
+  
+    
+    <script>function __prefix(e){return new URL("..",location).pathname+"."+e}function __get(e,t=localStorage){return JSON.parse(t.getItem(__prefix(e)))}</script>
+    
+    <input class="md-toggle" data-md-toggle="drawer" type="checkbox" id="__drawer" autocomplete="off">
+    <input class="md-toggle" data-md-toggle="search" type="checkbox" id="__search" autocomplete="off">
+    <label class="md-overlay" for="__drawer"></label>
+    <div data-md-component="skip">
+      
+        
+        <a href="#location-hidden-service-onion" class="md-skip">
+          Skip to content
+        </a>
+      
+    </div>
+    <div data-md-component="announce">
+      
+    </div>
+    
+      
+
+<header class="md-header" data-md-component="header">
+  <nav class="md-header__inner md-grid" aria-label="Header">
+    <a href=".." title="Docker Tor" class="md-header__button md-logo" aria-label="Docker Tor" data-md-component="logo">
+      
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a3 3 0 0 0 3-3 3 3 0 0 0-3-3 3 3 0 0 0-3 3 3 3 0 0 0 3 3m0 3.54C9.64 9.35 6.5 8 3 8v11c3.5 0 6.64 1.35 9 3.54 2.36-2.19 5.5-3.54 9-3.54V8c-3.5 0-6.64 1.35-9 3.54z"/></svg>
+
+    </a>
+    <label class="md-header__button md-icon" for="__drawer">
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M3 6h18v2H3V6m0 5h18v2H3v-2m0 5h18v2H3v-2z"/></svg>
+    </label>
+    <div class="md-header__title" data-md-component="header-title">
+      <div class="md-header__ellipsis">
+        <div class="md-header__topic">
+          <span class="md-ellipsis">
+            Docker Tor
+          </span>
+        </div>
+        <div class="md-header__topic" data-md-component="header-topic">
+          <span class="md-ellipsis">
+            
+              Hidden Service
+            
+          </span>
+        </div>
+      </div>
+    </div>
+    
+    
+    
+      <label class="md-header__button md-icon" for="__search">
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.516 6.516 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5z"/></svg>
+      </label>
+      
+<div class="md-search" data-md-component="search" role="dialog">
+  <label class="md-search__overlay" for="__search"></label>
+  <div class="md-search__inner" role="search">
+    <form class="md-search__form" name="search">
+      <input type="text" class="md-search__input" name="query" aria-label="Search" placeholder="Search" autocapitalize="off" autocorrect="off" autocomplete="off" spellcheck="false" data-md-component="search-query" required>
+      <label class="md-search__icon md-icon" for="__search">
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.516 6.516 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5z"/></svg>
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20 11v2H8l5.5 5.5-1.42 1.42L4.16 12l7.92-7.92L13.5 5.5 8 11h12z"/></svg>
+      </label>
+      <nav class="md-search__options" aria-label="Search">
+        
+        <button type="reset" class="md-search__icon md-icon" aria-label="Clear" tabindex="-1">
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M19 6.41 17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12 19 6.41z"/></svg>
+        </button>
+      </nav>
+      
+    </form>
+    <div class="md-search__output">
+      <div class="md-search__scrollwrap" data-md-scrollfix>
+        <div class="md-search-result" data-md-component="search-result">
+          <div class="md-search-result__meta">
+            Initializing search
+          </div>
+          <ol class="md-search-result__list"></ol>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+    
+    
+  </nav>
+  
+</header>
+    
+    <div class="md-container" data-md-component="container">
+      
+      
+        
+          
+        
+      
+      <main class="md-main" data-md-component="main">
+        <div class="md-main__inner md-grid">
+          
+            
+              
+              <div class="md-sidebar md-sidebar--primary" data-md-component="sidebar" data-md-type="navigation" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+
+<nav class="md-nav md-nav--primary" aria-label="Navigation" data-md-level="0">
+  <label class="md-nav__title" for="__drawer">
+    <a href=".." title="Docker Tor" class="md-nav__button md-logo" aria-label="Docker Tor" data-md-component="logo">
+      
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a3 3 0 0 0 3-3 3 3 0 0 0-3-3 3 3 0 0 0-3 3 3 3 0 0 0 3 3m0 3.54C9.64 9.35 6.5 8 3 8v11c3.5 0 6.64 1.35 9 3.54 2.36-2.19 5.5-3.54 9-3.54V8c-3.5 0-6.64 1.35-9 3.54z"/></svg>
+
+    </a>
+    Docker Tor
+  </label>
+  
+  <ul class="md-nav__list" data-md-scrollfix>
+    
+      
+      
+      
+
+  
+  
+  
+    <li class="md-nav__item">
+      <a href=".." class="md-nav__link">
+        Home
+      </a>
+    </li>
+  
+
+    
+      
+      
+      
+
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../proxy/" class="md-nav__link">
+        Proxy
+      </a>
+    </li>
+  
+
+    
+      
+      
+      
+
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../control/" class="md-nav__link">
+        Control
+      </a>
+    </li>
+  
+
+    
+      
+      
+      
+
+  
+  
+    
+  
+  
+    <li class="md-nav__item md-nav__item--active">
+      
+      <input class="md-nav__toggle md-toggle" data-md-toggle="toc" type="checkbox" id="__toc">
+      
+      
+        
+      
+      
+        <label class="md-nav__link md-nav__link--active" for="__toc">
+          Hidden Service
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <a href="./" class="md-nav__link md-nav__link--active">
+        Hidden Service
+      </a>
+      
+        
+<nav class="md-nav md-nav--secondary" aria-label="Table of contents">
+  
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Table of contents
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#start-a-hidden-service" class="md-nav__link">
+    Start a Hidden Service
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#hidden-services-options" class="md-nav__link">
+    Hidden Services Options
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#hidden-services-clients" class="md-nav__link">
+    Hidden Services Clients
+  </a>
+  
+    <nav class="md-nav" aria-label="Hidden Services Clients">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#references" class="md-nav__link">
+    References
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+      
+    </li>
+  
+
+    
+      
+      
+      
+
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../relay/" class="md-nav__link">
+        Relay
+      </a>
+    </li>
+  
+
+    
+      
+      
+      
+
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../nyx/" class="md-nav__link">
+        Nyx
+      </a>
+    </li>
+  
+
+    
+      
+      
+      
+
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../build/" class="md-nav__link">
+        Build
+      </a>
+    </li>
+  
+
+    
+      
+      
+      
+
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../kubernetes/" class="md-nav__link">
+        Kubernetes
+      </a>
+    </li>
+  
+
+    
+  </ul>
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+            
+              
+              <div class="md-sidebar md-sidebar--secondary" data-md-component="sidebar" data-md-type="toc" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+<nav class="md-nav md-nav--secondary" aria-label="Table of contents">
+  
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Table of contents
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#start-a-hidden-service" class="md-nav__link">
+    Start a Hidden Service
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#hidden-services-options" class="md-nav__link">
+    Hidden Services Options
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#hidden-services-clients" class="md-nav__link">
+    Hidden Services Clients
+  </a>
+  
+    <nav class="md-nav" aria-label="Hidden Services Clients">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#references" class="md-nav__link">
+    References
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+          
+          <div class="md-content" data-md-component="content">
+            <article class="md-content__inner md-typeset">
+              
+                
+                
+                <h1 id="location-hidden-service-onion">Location Hidden Service (.onion)</h1>
+<p>A hidden service is a site you visit or a service that uses Tor technology to stay secure and, if the owner wishes, anonymous. The terms "hidden services" and "onion services" are interchangeably.</p>
+<p>By default this image will not enable any hidden services. To enable hidden services the <code>-e TOR_SERVICE=true</code> flag is needed along wih a list of hosts in <code>-e TOR_SERVICE_HOSTS='&lt;hostname&gt;=&lt;wan port&gt;:&lt;redirect IP&gt;:&lt;redirect port&gt;,...'</code>. Multiple services can be configure for a host.</p>
+<p>It is generally good practice to create seperate Tor deamons for each hostname, but is not required.</p>
+<h2 id="start-a-hidden-service">Start a Hidden Service</h2>
+<p>To start a Tor hidden service with this image run the following docker command:</p>
+<pre><code class="language-bash">docker run -d --name tor -e TOR_SERVICE=true -e TOR_SERVICE_HOSTS='bitcoin=443:192.168.1.7:80,8443:192.168.1.5:443' -e TOR_SERVICE_HOSTS_CLIENTS='bitcoin=barney' -p 9050:9050/tcp barneybuffet/tor:latest`
+</code></pre>
+<p>The image will:</p>
+<ul>
+<li>Tell Tor to create a hidden service in <code>/tor/hidden_services/&lt;hostname&gt;</code></li>
+<li>Configure Tor to accept onion requests on a given port and redirect to an IP address and port</li>
+<li>Create an authroized client private/public key pair</li>
+</ul>
+<p>The onion address can be found in <code>/tor/hidden_services/&lt;hostname&gt;/hostname</code>
+The private key can be found in <code>/tor/hidden_services/auth_privates/&lt;hostname&gt;/&lt;client&gt;.auth_private</code></p>
+<h2 id="hidden-services-options">Hidden Services Options</h2>
+<p>The <code>TOR_SERVICE_HOSTS</code> flag uses the following configuration within the string.</p>
+<pre><code class="language-bash">-e TOR_SERVICE_HOSTS='&lt;hostname&gt;=&lt;wan port&gt;:&lt;redirect IP&gt;:&lt;redirect port&gt;,&lt;wan port&gt;:&lt;redirect IP&gt;:&lt;redirect port&gt;,... &lt;hostname&gt;=&lt;wan port&gt;:&lt;redirect IP&gt;:&lt;redirect port&gt;,&lt;wan port&gt;:&lt;redirect IP&gt;:&lt;redirect port&gt;,...
+</code></pre>
+<p>Multiple hosts can be configure with a space seperated list. And multiple services can be configure for each service with comma seperated array.</p>
+<pre><code class="language-bash">-e TOR_SERVICE_HOSTS='&lt;hostname&gt;=&lt;service 1&gt;,&lt;service 2&gt;,... &lt;hostname 2&gt;=&lt;service 1&gt;,&lt;service 2&gt;,&lt;service 3&gt; ...
+</code></pre>
+<p>Each service is configured via : seperated list and requires a wan, ip address and port</p>
+<table>
+<thead>
+<tr>
+<th align="left">Option</th>
+<th align="left">Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td align="left"><code>&lt;hostname&gt;</code></td>
+<td align="left">The hidden service holder</td>
+</tr>
+<tr>
+<td align="left"><code>&lt;wan port&gt;</code></td>
+<td align="left">The incoming port the onion service will listen on</td>
+</tr>
+<tr>
+<td align="left"><code>&lt;redirect ip&gt;</code></td>
+<td align="left">The ip address to redirect the onion request to</td>
+</tr>
+<tr>
+<td align="left"><code>&lt;redictio port&gt;</code></td>
+<td align="left">The port on the ip address to redirect the onion request to</td>
+</tr>
+</tbody>
+</table>
+<h2 id="hidden-services-clients">Hidden Services Clients</h2>
+<p>Client authorization is a method to make an onion service private and authenticated. It requires Tor clients to provide an authentication credential in order to connect to the onion service. The service side is configured with a public key and the client can only access it with a private key.</p>
+<p>Note: Once you have configured client authorization, anyone with the address will not be able to access it from this point on. If no authorization is configured, the service will be accessible to anyone with the onion address.</p>
+<p>This docker image has a bash script that generates public/private key pairs. To generate key during the first container start up you can set the <code>-e TOR_SERVICE_HOSTS_CLIENTS=hostname=client-1,client-2,...</code>.</p>
+<p>The bash script will generate a private and matching public key. The keys are put in the following directories:</p>
+<ul>
+<li>Public Key: <code>/tor/hidden_services/&lt;hostname&gt;/authorized_clients/&lt;client&gt;.auth</code></li>
+<li>Private Key: <code>/tor/auth_privates/&lt;hostname&gt;/&lt;client&gt;.auth_private</code></li>
+</ul>
+<p>A new client private/public key can be generated at any time by opening a terminal in the docker container and running the bash script.</p>
+<pre><code class="language-bash">client_auth.sh --service &lt;hostname&gt; --client alice
+</code></pre>
+<p>To copy the private key for use with your Tor browser in osx open a terminal in the <code>/tor/hidden_services/auth_privates/&lt;hostname&gt;/</code> binded port and use the following command.</p>
+<pre><code class="language-bash">cp &lt;client&gt;.auth_private ~/Library/Application Support/TorBrowser-Data/Tor/
+</code></pre>
+<h4 id="references">References</h4>
+<ul>
+<li><a href="https://riseup.net/en/security/network-security/tor/onionservices-best-practices">Best Practices for Hosting Onion Services</a></li>
+<li><a href="https://www.linuxjournal.com/content/tor-hidden-services">Tor Hidden Services </a></li>
+<li><a href="http://xmrhfasfg5suueegrnc4gsgyi2tyclcy5oz7f5drnrodmdtob6t2ioyd.onion/onion-services/setup/index.html">Set up Your Onion Service</a></li>
+<li><a href="https://betterdev.blog/minimal-safe-bash-script-template/">Minimal safe Bash script template</a></li>
+<li><a href="http://xmrhfasfg5suueegrnc4gsgyi2tyclcy5oz7f5drnrodmdtob6t2ioyd.onion/onion-services/advanced/client-auth/index.html">Client Authorization</a></li>
+<li><a href="https://gist.github.com/mtigas/9c2386adf65345be34045dace134140b">mtigas/onion-svc-v3-client-auth.sh</a></li>
+</ul>
+                
+              
+              
+                
+
+
+              
+            </article>
+          </div>
+        </div>
+        
+      </main>
+      
+        
+<footer class="md-footer">
+  
+    <nav class="md-footer__inner md-grid" aria-label="Footer">
+      
+        
+        <a href="../control/" class="md-footer__link md-footer__link--prev" aria-label="Previous: Control" rel="prev">
+          <div class="md-footer__button md-icon">
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20 11v2H8l5.5 5.5-1.42 1.42L4.16 12l7.92-7.92L13.5 5.5 8 11h12z"/></svg>
+          </div>
+          <div class="md-footer__title">
+            <div class="md-ellipsis">
+              <span class="md-footer__direction">
+                Previous
+              </span>
+              Control
+            </div>
+          </div>
+        </a>
+      
+      
+        
+        <a href="../relay/" class="md-footer__link md-footer__link--next" aria-label="Next: Relay" rel="next">
+          <div class="md-footer__title">
+            <div class="md-ellipsis">
+              <span class="md-footer__direction">
+                Next
+              </span>
+              Relay
+            </div>
+          </div>
+          <div class="md-footer__button md-icon">
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M4 11v2h12l-5.5 5.5 1.42 1.42L19.84 12l-7.92-7.92L10.5 5.5 16 11H4z"/></svg>
+          </div>
+        </a>
+      
+    </nav>
+  
+  <div class="md-footer-meta md-typeset">
+    <div class="md-footer-meta__inner md-grid">
+      <div class="md-footer-copyright">
+        
+        
+          Made with
+          <a href="https://squidfunk.github.io/mkdocs-material/" target="_blank" rel="noopener">
+            Material for MkDocs
+          </a>
+        
+        
+      </div>
+      
+    </div>
+  </div>
+</footer>
+      
+    </div>
+    <div class="md-dialog" data-md-component="dialog">
+      <div class="md-dialog__inner md-typeset"></div>
+    </div>
+    <script id="__config" type="application/json">{"base": "..", "features": [], "translations": {"clipboard.copy": "Copy to clipboard", "clipboard.copied": "Copied to clipboard", "search.config.lang": "en", "search.config.pipeline": "trimmer, stopWordFilter", "search.config.separator": "[\\s\\-]+", "search.placeholder": "Search", "search.result.placeholder": "Type to start searching", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.term.missing": "Missing", "select.version.title": "Select version"}, "search": "../assets/javascripts/workers/search.f8263e09.min.js", "version": null}</script>
+    
+    
+      <script src="../assets/javascripts/bundle.4fc53ad4.min.js"></script>
+      
+    
+  </body>
+</html>
