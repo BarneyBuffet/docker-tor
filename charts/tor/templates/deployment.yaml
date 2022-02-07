@@ -33,7 +33,7 @@ spec:
             {{- toYaml .Values.securityContext | nindent 12 }}
           image: "{{ .Values.image.repository }}:{{ .Values.image.tag | default .Chart.AppVersion }}"
           imagePullPolicy: {{ .Values.image.pullPolicy }}
-          args: ["sh","-c","echo 'MaxCircuitDirtiness 1800' >> /tor/torrc; tor -f /tor/torrc"]
+          args: ["sh","-c","echo 'MaxCircuitDirtiness 30' >> /tor/torrc; tor -f /tor/torrc"]
           env:
             {{- include "helpers.list-env-variables" . | indent 12 }}
           ports:
