@@ -22,13 +22,14 @@ env:
     TOR_PROXY: 'true'
     TOR_PROXY_PORT: '0.0.0.0:9050'
     TOR_PROXY_ACCEPT: 'accept 0.0.0.0/0'
-    TOR_CONTROL: 'true'
+    TOR_CONTROL: 'false'
     TOR_CONTROL_PORT: '127.0.0.1:9051'
     TOR_CONTROL_SOCKET: 'true'
     TOR_CONTROL_COOKIE: 'true'
     TOR_SERVICE: 'false'
     TOR_RELAY: 'false'
-
+  secret:
+    TOR_CONTROL_PASSWORD: 'password'
 serviceAccount:
   # Specifies whether a service account should be created
   create: true
