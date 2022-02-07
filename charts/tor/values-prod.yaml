@@ -24,10 +24,11 @@ env:
     TOR_PROXY_ACCEPT: 'accept 0.0.0.0/0'
     TOR_CONTROL: 'true'
     TOR_CONTROL_PORT: '127.0.0.1:9051'
+    TOR_CONTROL_SOCKET: 'true'
     TOR_SERVICE: 'false'
     TOR_RELAY: 'false'
   secret:
-    TOR_CONTROL_PASSWORD: 'password'
+    TOR_CONTROL_PASSWORD: ''
   
 
 serviceAccount:
