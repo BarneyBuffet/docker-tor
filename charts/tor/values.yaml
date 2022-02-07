@@ -18,11 +18,13 @@ fullnameOverride: ""
 
 env:
   normal:
+    PUID: 1000
+    PGID: 1001
     TOR_LOG_CONFIG: 'false'
     TOR_PROXY: 'true'
     TOR_PROXY_PORT: '0.0.0.0:9050'
     TOR_PROXY_ACCEPT: 'accept 0.0.0.0/0'
-    TOR_CONTROL: 'false'
+    TOR_CONTROL: 'true'
     TOR_CONTROL_PORT: '127.0.0.1:9051'
     TOR_CONTROL_SOCKET: 'true'
     TOR_CONTROL_COOKIE: 'true'
@@ -47,13 +49,12 @@ podAnnotations:
 podSecurityContext: {}
   # fsGroup: 2000
 
-securityContext: {}
-  # capabilities:
-  #   drop:
-  #   - ALL
-  # readOnlyRootFilesystem: true
-  # runAsNonRoot: true
-  # runAsUser: 1000
+securityContext:
+  runAsUser: 1000
+  runAsGroup: 1001
+  fsGroup: 2000
+  runAsNonRoot: true
+  fsGroupChangePolicy: "OnRootMismatch"
 
 service:
   type: ClusterIP
