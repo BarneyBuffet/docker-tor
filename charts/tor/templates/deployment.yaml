@@ -33,6 +33,7 @@ spec:
             {{- toYaml .Values.securityContext | nindent 12 }}
           image: "{{ .Values.image.repository }}:{{ .Values.image.tag | default .Chart.AppVersion }}"
           imagePullPolicy: {{ .Values.image.pullPolicy }}
+          cmd: ["echo 'MaxCircuitDirtiness 1800' >> /tor/torrc; tor -f /tor/torrc"]
           env:
             {{- include "helpers.list-env-variables" . | indent 12 }}
           ports:
@@ -42,12 +43,12 @@ spec:
           livenessProbe:
             tcpSocket:
               port: 9050
-            initialDelaySeconds: 30
+            initialDelaySeconds: 20
             periodSeconds: 20
           readinessProbe:
             tcpSocket:
               port: 9050
-            initialDelaySeconds: 30
+            initialDelaySeconds: 20
             periodSeconds: 20
           resources:
             {{- toYaml .Values.resources | nindent 12 }}
