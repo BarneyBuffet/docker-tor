@@ -26,8 +26,8 @@ env:
     TOR_PROXY_ACCEPT: 'accept 0.0.0.0/0'
     TOR_CONTROL: 'false'
     TOR_CONTROL_PORT: '127.0.0.1:9051'
-    TOR_CONTROL_SOCKET: 'true'
-    TOR_CONTROL_COOKIE: 'true'
+    TOR_CONTROL_SOCKET: 'false'
+    TOR_CONTROL_COOKIE: 'false'
     TOR_SERVICE: 'false'
     TOR_RELAY: 'false'
   secret:
@@ -35,7 +35,7 @@ env:
 
 serviceAccount:
   # Specifies whether a service account should be created
-  create: true
+  create: false
   # Annotations to add to the service account
   annotations: {}
   # The name of the service account to use.
