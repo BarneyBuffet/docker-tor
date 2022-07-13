@@ -46,10 +46,10 @@ podAnnotations:
   "cluster-autoscaler.kubernetes.io/safe-to-evict": "true"
   "config.linkerd.io/skip-outbound-ports": "*"
 
-podSecurityContext:
-  runAsUser: 1000
-  runAsGroup: 1001
-  fsGroup: 2000
+podSecurityContext: {}
+#   runAsUser: 1000
+#   runAsGroup: 1001
+#   fsGroup: 2000
 
 securityContext:
   capabilities:
