@@ -98,7 +98,7 @@ nodeSelector:
   eks.amazonaws.com/nodegroup: public
 
 tolerations:
-- key: "public"
+- key: public
   value: "true"
   operator: "Equal"
   effect: "NoSchedule"
