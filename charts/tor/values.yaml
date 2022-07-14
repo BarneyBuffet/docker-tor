@@ -94,8 +94,13 @@ autoscaling:
   targetCPUUtilizationPercentage: 80
   # targetMemoryUtilizationPercentage: 80
 
-nodeSelector: {}
+nodeSelector: 
+  eks.amazonaws.com/nodegroup: public
 
-tolerations: []
+tolerations:
+- key: "public"
+  value: "true"
+  operator: "Equal"
+  effect: "NoSchedule"
 
 affinity: {}
