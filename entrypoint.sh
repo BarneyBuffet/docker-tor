@@ -35,7 +35,7 @@ map_user(){
   chown -R nonroot:nonroot \
     ${DATA_DIR}
   echo "Enforced ownership of ${DATA_DIR} to nonroot:nonroot"
-  
+
   ## Make sure volume permissions are correct
   chmod -R go=rX,u=rwX \
     ${DATA_DIR}
@@ -68,6 +68,14 @@ proxy_config(){
   if [[ -n "${TOR_PROXY_ACCEPT}" ]]; then
     sed -i "/SocksPolicy accept/c\SocksPolicy ${TOR_PROXY_ACCEPT}" $TOR_CONFIG_FILE
     echo "Updated proxy accept policy..."
+  fi
+
+  if [[ -n "${HTTPS_PROXY}" ]]; then
+    echo "HTTPSProxy "${HTTPS_PROXY}"" >> $TOR_CONFIG_FILE
+  fi
+
+  if [[ -n "${HTTPS_PROXY_CREDS}" ]]; then
+    echo "HTTPSProxyAuthenticator "${HTTPS_PROXY_CREDS}"" >> $TOR_CONFIG_FILE
   fi
 }
 
@@ -126,10 +134,10 @@ client_authorization_config(){
 
     ## Set hostname
     service_name=${host_details[0]}
-    
+
     ## Convert clients string into an array of clients
     clients=(${host_details[1]//,/ })
-    
+
     ## Parse over clients array
     for client in ${clients[@]}; do
 
@@ -156,10 +164,10 @@ hidden_services_config(){
 
     ## Set hostname
     service_name=${host_details[0]}
-    
+
     ## Convert services string into an array of services
     services=(${host_details[1]//,/ })
-    
+
     ## Parse over services array
     for service in ${services[@]}; do
       ## Convert service string to array of items
@@ -172,7 +180,7 @@ hidden_services_config(){
 
       ## Write service to line in file
       sed -i "/## Hidden Services/a\HiddenServicePort ${service_port} ${redirect_host}:${redirect_port}" $TOR_CONFIG_FILE
-    done    
+    done
 
     ## Write service name to line to file
     ## I go after services because I am inserted after the same line, so we need to do it backwards.
@@ -181,6 +189,14 @@ hidden_services_config(){
 
   done
 
+}
+
+##############################################################################
+## Remove file locks. Useful after ungraceful crash
+##############################################################################
+remove_lock_files(){
+  rm -f ${DATA_DIR}/data/lock
+  echo "Removed file lock"
 }
 
 ##############################################################################
@@ -200,7 +216,7 @@ copy_files(){
 link_config(){
   ## If we have a cookie, symbolic link to default for nyx
   ## TODO: nyx should be its own container
-  if [[ ! -f /tor/control_auth_cookie  ]] && [[ -f /home/tor/.tor/control_auth_cookie  ]]; then 
+  if [[ ! -f /tor/control_auth_cookie  ]] && [[ -f /home/tor/.tor/control_auth_cookie  ]]; then
     mkdir -p /home/tor/.tor
     ln -s /tor/control_auth_cookie /home/tor/.tor/control_auth_cookie
     echo "Symbolic link authorisation cookie..."
@@ -254,7 +270,7 @@ init(){
 main() {
 
   ## Initialise container if there is no lock file or we are overwriting
-  if [[ ! -e $TOR_CONFIG_FILE.lock ]] || $TOR_CONFIG_OVERWRITE; then 
+  if [[ ! -e $TOR_CONFIG_FILE.lock ]] || $TOR_CONFIG_OVERWRITE; then
     init
     echo "Only run init once. Delete this file to re-init torrc on container start up." > $TOR_CONFIG_FILE.lock
   else
@@ -263,6 +279,10 @@ main() {
 
   map_user
   link_config
+
+  if $TOR_REMOVE_FILE_LOCK; then
+    remove_lock_files
+  fi
 
   ## Echo config to log if set true
   if $TOR_LOG_CONFIG; then
@@ -276,7 +296,7 @@ main
 echo -e "\\n====================================- STARTING TOR -===================================="
 ## Display Tor version & torrc in log
 tor --version
-echo ''
 
-## Execute dockerfile CMD as nonroot alternate gosu
+## Execute dockerfile CMD as nonroot alternate gosu                                                                                                                           
+/usr/bin/python3 tor-relay-scanner-0.0.7.pyz -g 5 --torrc > /tor/relays
 su-exec "${PUID}:${PGID}" "$@"
