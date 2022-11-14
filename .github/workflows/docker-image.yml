@@ -7,25 +7,23 @@ on:
     branches: [ "main" ]
 
 jobs:
-
   build:
-
     runs-on: ubuntu-latest
 
     steps:
-    - uses: actions/checkout@v3
-    - name: Build image
-      run: DOCKER_BUILDKIT=1 docker build . --file Dockerfile --tag deathmond1987/tor_for_r:$(date +%s)
+      - uses: actions/checkout@v3
+      - name: Build image
+        run: DOCKER_BUILDKIT=1 docker build . --file Dockerfile --tag deathmond1987/tor_for_r:$(date +%s)
     
-    - uses: docker/login-action@v2
-    - name: Login to DockerHub
-      with:
-        username: ${{ secrets.DOCKERHUB_USERNAME }}
-        password: ${{ secrets.DOCKERHUB_TOKEN }}
+      - uses: docker/login-action@v2
+      - name: Login to DockerHub
+        with:
+          username: ${{ secrets.DOCKERHUB_USERNAME }}
+          password: ${{ secrets.DOCKERHUB_TOKEN }}
         
-    - uses: docker/build-push-action@v2    
-    - name: Build image and push to Docker Hub and GitHub Container Registry
-      with:
+      - uses: docker/build-push-action@v2    
+      - name: Build image and push to Docker Hub and GitHub Container Registry
+        with:
           # relative path to the place where source code with Dockerfile is located
           context: .
           # Note: tags has to be all lower-case
@@ -33,8 +31,5 @@ jobs:
             deathmond1987/tor_for_r::$(date +%s) 
           # build on feature branches, push only on main branch
           push: ${{ github.ref == 'refs/heads/main' }}
-
-#    - name: Image digest
-#      run: echo ${{ steps.docker_build.outputs.digest }}
    
    
