@@ -2,34 +2,26 @@ name: Docker Image CI
 
 on:
   push:
-    branches: [ "main" ]
+    branches: [ main ]
   pull_request:
-    branches: [ "main" ]
+    branches: [ main ]
 
 jobs:
+
   build:
+
     runs-on: ubuntu-latest
 
     steps:
-      - uses: actions/checkout@v3
-      - name: Build image
-        run: DOCKER_BUILDKIT=1 docker build . --file Dockerfile --tag deathmond1987/tor_for_r:$(date +%s)
-
-      - name: Login to DockerHub
-      - uses: docker/login-action@v2
-        with:
-          username: ${{ secrets.DOCKERHUB_USERNAME }}
-          password: ${{ secrets.DOCKERHUB_TOKEN }}
-
-      - name: Build image and push to Docker Hub and GitHub Container Registry        
-      - uses: docker/build-push-action@v2    
-        with:
-          # relative path to the place where source code with Dockerfile is located
-          context: .
-          # Note: tags has to be all lower-case
-          tags: |
-            deathmond1987/tor_for_r::$(date +%s) 
-          # build on feature branches, push only on main branch
-          push: ${{ github.ref == 'refs/heads/main' }}
-   
-   
+    - uses: actions/checkout@v2
+    - name: docker login
+      env:
+        DOCKER_USER: ${{secrets.DOCKER_USER}}
+        DOCKER_TOKEN: ${{secrets.DOCKER_TOKEN}}
+      run: |
+        docker login -u $DOCKER_USER -p $DOCKER_TOKEN 
+    - name: Build the Docker image
+      run: docker build . --tag deathmond1987/tor_for_r:$(date +%s)
+      
+    - name: Docker Push
+      run: docker push deathmond1987/tor_for_r
