@@ -22,10 +22,9 @@ RUN apk --no-cache add --update \
     openssl openssl-dev
 
 ## Get Tor key file and tar source file
-#RUN wget $TORGZ.asc &&\
-#    wget $TORGZ
+RUN wget $TORGZ
 #COPY ./tor-$TOR_VER.tar.gz.sha256sum.asc ./
-COPY ./tor-$TOR_VER.tar.gz ./
+#COPY ./tor-$TOR_VER.tar.gz ./
 ## Verify Tor source tarballs asc signatures
 ## Get signature from key server
 #RUN gpg --keyserver hkp://keyserver.ubuntu.com --recv-keys ${TOR_KEY}
