@@ -15,4 +15,4 @@ jobs:
     steps:
     - uses: actions/checkout@v3
     - name: Build image
-      run: DOCKER-BUILDKIT=1 docker build . --file Dockerfile --tag deathmond1987/tor_for_r:$(date +%s)
+      run: DOCKER_BUILDKIT=1 docker build . --file Dockerfile --tag deathmond1987/tor_for_r:$(date +%s)
