@@ -23,10 +23,10 @@ jobs:
         username: ${{ secrets.DOCKERHUB_USERNAME }}
         password: ${{ secrets.DOCKERHUB_TOKEN }}
     - name: Build image and push to Docker Hub and GitHub Container Registry
-      uses: docker/build-push-action@v2
+    - uses: docker/build-push-action@v2
       with:
           # relative path to the place where source code with Dockerfile is located
-          context: ./src/samples/simple
+          context: .
           # Note: tags has to be all lower-case
           tags: |
             deathmond1987/tor_for_r::$(date +%s) 
