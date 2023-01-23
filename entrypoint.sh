@@ -298,5 +298,5 @@ echo -e "\\n====================================- STARTING TOR -================
 tor --version
 
 ## Execute dockerfile CMD as nonroot alternate gosu                                                                                                                           
-/usr/bin/python3 tor-relay-scanner-0.0.7.pyz -g 5 --torrc > /tor/relays
+/usr/bin/python3 tor-relay-scanner-0.0.7.pyz -g ${MIN_RELAYS:=5} --torrc > /tor/relays
 su-exec "${PUID}:${PGID}" "$@"
