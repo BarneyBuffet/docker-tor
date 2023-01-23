@@ -112,13 +112,13 @@ ENV PUID= \
     TOR_RELAY="false"
 
 ## Label the docker image
-LABEL maintainer="Barney Buffet <BarneyBuffet@tutanota.com>"
-LABEL name="Tor network client (daemon)"
+LABEL maintainer="Sidorin Konstantin <Deathmond1987@gmail.com>"
+LABEL name="Tor network client (daemon) with custom bridges"
 LABEL version=$TOR_VER
 LABEL description="A docker image for tor with bridge finder"
 LABEL license="GNU"
 LABEL url="https://www.torproject.org"
-LABEL vcs-url="https://github.com/BarneyBuffet"  
+LABEL vcs-url="https://github.com/deathmond1987/docker-tor/"  
 
 VOLUME [ "$DATA_DIR" ]
 WORKDIR ${DATA_DIR}
