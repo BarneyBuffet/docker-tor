@@ -30,5 +30,8 @@ tolerations:
   value: "true"
   operator: "Equal"
   effect: "NoSchedule"
-
+- key: streamr
+  value: "true"
+  operator: "Equal"
+  effect: "NoSchedule"
 affinity: {}
